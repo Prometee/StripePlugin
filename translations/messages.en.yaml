@@ -25,6 +25,29 @@ flux_se_sylius_stripe_plugin:
                     open_stripe_app: Open Sylius Stripe App
                     learn_more_restricted_keys: Learn more about restricted API keys
                     webhook_secret_key: Create a new webhook endpoint
+    stripe_appearance:
+        title: Payment form appearance
+        theme: Theme
+        inputs: Input style
+        labels: Label position
+        color_primary: Primary color (hex)
+        color_background: Background color (hex)
+        color_text: Text color (hex)
+        color_danger: Error color (hex)
+        font_family: Font family
+        border_radius: Border radius
+        spacing_unit: Spacing unit
+        theme_choices:
+            stripe: Stripe (default)
+            night: Night
+            flat: Flat
+        inputs_choices:
+            spaced: Spaced (default)
+            condensed: Condensed
+        labels_choices:
+            auto: Auto (default)
+            above: Above
+            floating: Floating
     order_pay:
         web_elements:
             pay: Pay

@@ -1,0 +1,13 @@
+sylius_twig_hooks:
+    hooks:
+        'sylius_admin.payment_method.create.content.form.sections': &sections_hook
+            stripe_appearance:
+                template: '@FluxSESyliusStripePlugin/admin/payment_method/form/sections/stripe_appearance.html.twig'
+                priority: 50
+        'sylius_admin.payment_method.update.content.form.sections': *sections_hook
+
+        'sylius_admin.payment_method.create.content.form.sections.stripe_appearance.stripe_web_elements': &appearance_content
+            content:
+                template: '@FluxSESyliusStripePlugin/admin/payment_method/form/sections/stripe_appearance/stripe_web_elements.html.twig'
+                priority: 0
+        'sylius_admin.payment_method.update.content.form.sections.stripe_appearance.stripe_web_elements': *appearance_content

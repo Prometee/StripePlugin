@@ -8,6 +8,8 @@ parameters:
 
 services:
 
+    FluxSE\SyliusStripePlugin\Appearance\AppearanceBuilder: ~
+
     FluxSE\SyliusStripePlugin\Provider\StripeNotifyPaymentProvider:
         arguments:
             - '%flux_se.sylius_stripe.factories%'

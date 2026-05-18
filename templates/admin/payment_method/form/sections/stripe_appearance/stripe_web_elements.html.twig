@@ -1,0 +1,76 @@
+{% macro color_field(field) %}
+    <div class="mb-3">
+        {{ form_label(field) }}
+        <div class="input-group" data-controller="stripe-appearance-color-picker">
+            <input type="color"
+                   class="form-control form-control-color p-1"
+                   style="width: 44px; flex: 0 0 44px; cursor: pointer"
+                   tabindex="-1"
+                   aria-hidden="true"
+                   data-stripe-appearance-color-picker-target="picker"
+                   data-action="input->stripe-appearance-color-picker#syncFromPicker">
+            {{ form_widget(field, {attr: {
+                placeholder: '#000000',
+                'data-stripe-appearance-color-picker-target': 'text',
+                'data-action': 'input->stripe-appearance-color-picker#syncFromText'
+            }}) }}
+            <button type="button"
+                    class="btn btn-outline-secondary"
+                    data-action="stripe-appearance-color-picker#clear"
+                    title="Clear">
+                &times;
+            </button>
+        </div>
+        {{ form_errors(field) }}
+    </div>
+{% endmacro %}
+
+{% import _self as macros %}
+
+{% set appearance_form = hookable_metadata.context.form.gatewayConfig.config.stripe_appearance %}
+
+<div class="card mb-3">
+    <div class="card-header">
+        <div class="card-title">
+            {{ 'flux_se_sylius_stripe_plugin.stripe_appearance.title'|trans }}
+        </div>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-12 col-md-4">
+                {{ form_row(appearance_form.theme) }}
+            </div>
+            <div class="col-12 col-md-4">
+                {{ form_row(appearance_form.inputs) }}
+            </div>
+            <div class="col-12 col-md-4">
+                {{ form_row(appearance_form.labels) }}
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12 col-md-3">
+                {{ macros.color_field(appearance_form.colorPrimary) }}
+            </div>
+            <div class="col-12 col-md-3">
+                {{ macros.color_field(appearance_form.colorBackground) }}
+            </div>
+            <div class="col-12 col-md-3">
+                {{ macros.color_field(appearance_form.colorText) }}
+            </div>
+            <div class="col-12 col-md-3">
+                {{ macros.color_field(appearance_form.colorDanger) }}
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12 col-md-4">
+                {{ form_row(appearance_form.fontFamily) }}
+            </div>
+            <div class="col-12 col-md-4">
+                {{ form_row(appearance_form.borderRadius, {attr: {placeholder: '4px'}}) }}
+            </div>
+            <div class="col-12 col-md-4">
+                {{ form_row(appearance_form.spacingUnit, {attr: {placeholder: '4px'}}) }}
+            </div>
+        </div>
+    </div>
+</div>
