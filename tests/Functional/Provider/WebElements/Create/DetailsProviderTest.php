@@ -105,6 +105,7 @@ class DetailsProviderTest extends KernelTestCase
                 'locale' => 'en_US',
                 'product_categories' => 'mugs,tea',
                 'first_order' => 'yes',
+                'customer_email' => 'oliver@doe.com',
             ],
         ];
 

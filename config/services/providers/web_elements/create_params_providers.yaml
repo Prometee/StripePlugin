@@ -56,3 +56,9 @@ services:
         tags:
             - name: flux_se.sylius_stripe.provider.web_elements.create.metadata
               priority: -300
+
+    flux_se.sylius_stripe.provider.web_elements.create.metadata.customer_email:
+        class: FluxSE\SyliusStripePlugin\Provider\CustomerEmailMetadataProvider
+        tags:
+            - name: flux_se.sylius_stripe.provider.web_elements.create.metadata
+              priority: -350
