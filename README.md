@@ -182,6 +182,7 @@ Payment method configuration edit form in the Sylius admin.
 - [API (Sylius using APIPlatform)](docs/API.md)
 - [Webhook events](docs/WEBHOOK-EVENTS.md)
 - [Express Checkout on the cart page](docs/EXPRESS-CHECKOUT.md)
+- [Adaptive Pricing on Stripe Checkout](docs/ADAPTIVE-PRICING.md)
 
 ## Changelog
 

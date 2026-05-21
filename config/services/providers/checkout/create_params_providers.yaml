@@ -30,6 +30,12 @@ services:
         tags:
             - name: flux_se.sylius_stripe.provider.checkout.create.inner_params
               priority: -200
+
+    flux_se.sylius_stripe.provider.checkout.create.adaptive_pricing:
+        class: FluxSE\SyliusStripePlugin\Provider\Checkout\Create\AdaptivePricingProvider
+        tags:
+            - name: flux_se.sylius_stripe.provider.checkout.create.inner_params
+              priority: -250
         
     flux_se.sylius_stripe.provider.checkout.create.mode.payment:
         class: FluxSE\SyliusStripePlugin\Provider\Checkout\Create\ModePaymentProvider
