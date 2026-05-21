@@ -1,4 +1,7 @@
 flux_se_sylius_stripe_plugin:
+    admin:
+        notification:
+            legacy_secret_key: 'Payment method "%payment_method_name%" uses a legacy secret key (sk_…). Switch to a Restricted API Key from the Sylius Stripe App.'
     gateway_factory:
         stripe_checkout: Stripe (Checkout)
         stripe_web_elements: Stripe (Web Elements)
@@ -20,8 +23,9 @@ flux_se_sylius_stripe_plugin:
                     payment_method_types_deprecated: This setting is deprecated and will be removed in Stripe Plugin 2.0. Leave this list empty and manage active payment methods directly in your Stripe Dashboard, so Stripe can dynamically present the best subset to each customer.
                 action:
                     open_stripe_app: Open Sylius Stripe App
-                    secret_key: Open Stripe Dashboard API keys.
-                    webhook_secret_key: Create a new webhook endpoint.
+                    learn_more_restricted_keys: Learn more about restricted API keys
+                    secret_key: Open Stripe Dashboard API keys
+                    webhook_secret_key: Create a new webhook endpoint
                     manage_payment_methods: Manage payment methods in Stripe Dashboard
     order_pay:
         web_elements:

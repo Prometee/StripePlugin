@@ -1,4 +1,7 @@
 flux_se_sylius_stripe_plugin:
+    admin:
+        notification:
+            legacy_secret_key: 'La méthode de paiement « %payment_method_name% » utilise une clé secrète legacy (sk_…). Passez à une clé d''API restreinte depuis l''application Sylius Stripe.'
     gateway_factory:
         stripe_checkout: Stripe (Checkout)
         stripe_web_elements: Stripe (Web Elements)
@@ -20,8 +23,9 @@ flux_se_sylius_stripe_plugin:
                     payment_method_types_deprecated: Ce paramètre est obsolète et sera supprimé dans Stripe Plugin 2.0. Laissez cette liste vide et gérez les méthodes de paiement actives directement dans votre tableau de bord Stripe, afin que Stripe puisse présenter dynamiquement le meilleur sous-ensemble à chaque client.
                 action:
                     open_stripe_app: Ouvrir l'application Sylius Stripe
-                    secret_key: Ouvrir les clés API du tableau de bord Stripe.
-                    webhook_secret_key: Créez un nouveau webhook endpoint.
+                    learn_more_restricted_keys: En savoir plus sur les clés d'API restreintes
+                    secret_key: Ouvrir les clés API du tableau de bord Stripe
+                    webhook_secret_key: Créez un nouveau webhook endpoint
                     manage_payment_methods: Gérer les méthodes de paiement dans le tableau de bord Stripe
     order_pay:
         web_elements:
