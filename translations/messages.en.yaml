@@ -16,7 +16,7 @@ flux_se_sylius_stripe_plugin:
                     secret_key_legacy_warning: This gateway still uses a standard Stripe secret key (sk_…), which is no longer supported in 2.0. Saving this form will be rejected by the validator - replace the key with a Restricted API Key from the Sylius Stripe App.
                     use_authorize: When a payment is authorized, the bank guarantees the amount and holds it on the customer’s card for up to seven days.
                     enable_express_checkout: Show wallet buttons on cart and checkout pages. The actual buttons rendered are decided by the wallets enabled in your Stripe Dashboard and by the customer's browser. Requires webhook events and a registered payment method domain.
-                    enable_adaptive_pricing: Display checkout prices in the customer's local currency while you continue to settle in your own currency. Stripe applies an FX spread on converted amounts and refunds remain in your settlement currency. Overrides the dashboard-wide Adaptive Pricing setting for this gateway only.
+                    enable_adaptive_pricing: Display checkout prices in the customer's local currency while you continue to settle in your own currency. Stripe applies an FX spread on converted amounts starting at 2%, and refunds remain in your settlement currency. Overrides the dashboard-wide Adaptive Pricing setting for this gateway only. Review the full pricing breakdown before enabling.
                     webhook_secret_key: Create a new webhook endpoint to generate a new webhook secret key on the Stripe dashboard and listen for several events.
                 action:
                     open_stripe_app: Open Sylius Stripe App

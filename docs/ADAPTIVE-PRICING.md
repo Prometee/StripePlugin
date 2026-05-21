@@ -37,17 +37,25 @@ The field is **not** rendered for **Stripe (Web Elements)** payment methods.
 | off         | off              | Adaptive Pricing off           |
 
 When the plugin flag is **off**, the parameter is omitted from the Checkout Session
-payload — the Dashboard fallback continues to work as before. The plugin
+payload, so the Dashboard fallback continues to work as before. The plugin
 intentionally does not emit `adaptive_pricing: { enabled: false }`, so a gateway
 without the flag does not override the merchant's Dashboard preference.
 
-## FX spread and refunds
+## Pricing considerations
 
-Stripe applies an FX spread on the converted amount shown to the buyer. The merchant 
-still receives funds in their settlement currency, and **refunds are processed in the 
-settlement currency**, not in the buyer's displayed currency. Communicate this to your 
-support team — a customer who paid in EUR but sees the local-currency total may expect 
-a refund in the local currency.
+Enabling Adaptive Pricing is **not free**. Stripe applies an FX spread on the
+converted amount shown to the buyer, **starting at 2%**. Other Stripe fees
+applicable to your account continue to apply on the same transaction.
+
+Before enabling this flag, **review your full Stripe pricing profile for the
+markets you sell into** and confirm the combined impact is acceptable for your
+business model. Stripe's pricing page (`https://stripe.com/pricing`) lists the
+headline rates; your account-specific contract may add or change some of them.
+
+Refunds are processed in your **settlement currency**, not in the buyer's
+displayed currency. The FX delta is not reversed by a refund. Communicate this
+to your support team: a customer who paid in EUR but saw a USD total on the
+Checkout page may expect a refund in USD, which Stripe will not provide.
 
 ## Limitations
 
