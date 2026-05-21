@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\FluxSE\SyliusStripePlugin\Unit\Form\Type;
 
+use FluxSE\SyliusStripePlugin\Form\Type\StripeCheckoutGatewayConfigurationType;
 use FluxSE\SyliusStripePlugin\Form\Type\StripeGatewayConfigurationType;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
@@ -24,7 +25,7 @@ final class StripeGatewayConfigurationTypeTest extends TestCase
 
     public function test_buildForm_registers_enable_express_checkout_field(): void
     {
-        $registered = $this->collectRegisteredFields('stripe_checkout');
+        $registered = $this->collectRegisteredFields(new StripeGatewayConfigurationType());
 
         self::assertArrayHasKey('enable_express_checkout', $registered, 'enable_express_checkout field is not registered on the form.');
         self::assertSame(CheckboxType::class, $registered['enable_express_checkout']['type']);
@@ -35,9 +36,9 @@ final class StripeGatewayConfigurationTypeTest extends TestCase
         );
     }
 
-    public function test_buildForm_registers_enable_adaptive_pricing_field_for_stripe_checkout(): void
+    public function test_stripe_checkout_form_registers_enable_adaptive_pricing_field(): void
     {
-        $registered = $this->collectRegisteredFields('stripe_checkout');
+        $registered = $this->collectRegisteredFields(new StripeCheckoutGatewayConfigurationType());
 
         self::assertArrayHasKey('enable_adaptive_pricing', $registered, 'enable_adaptive_pricing field is not registered for stripe_checkout.');
         self::assertSame(CheckboxType::class, $registered['enable_adaptive_pricing']['type']);
@@ -48,15 +49,25 @@ final class StripeGatewayConfigurationTypeTest extends TestCase
         );
     }
 
-    public function test_buildForm_omits_enable_adaptive_pricing_field_for_stripe_web_elements(): void
+    public function test_stripe_checkout_form_inherits_base_form_via_get_parent(): void
     {
-        $registered = $this->collectRegisteredFields('stripe_web_elements');
-
-        self::assertArrayNotHasKey('enable_adaptive_pricing', $registered, 'enable_adaptive_pricing field must not be registered for stripe_web_elements.');
+        self::assertSame(
+            StripeGatewayConfigurationType::class,
+            (new StripeCheckoutGatewayConfigurationType())->getParent(),
+        );
     }
 
-    /** @return array<string, array{type: string, options: array<string, mixed>}> */
-    private function collectRegisteredFields(string $factoryName): array
+    public function test_base_form_omits_enable_adaptive_pricing_field(): void
+    {
+        $registered = $this->collectRegisteredFields(new StripeGatewayConfigurationType());
+
+        self::assertArrayNotHasKey('enable_adaptive_pricing', $registered, 'enable_adaptive_pricing field must not be registered on the base form (stripe_web_elements).');
+    }
+
+    /**
+     * @return array<string, array{type: string, options: array<string, mixed>}>
+     */
+    private function collectRegisteredFields(\Symfony\Component\Form\FormTypeInterface $type): array
     {
         $registered = [];
         $builder = $this->createMock(FormBuilderInterface::class);
@@ -68,7 +79,7 @@ final class StripeGatewayConfigurationTypeTest extends TestCase
                 return $builder;
             });
 
-        (new StripeGatewayConfigurationType($factoryName))->buildForm($builder, []);
+        $type->buildForm($builder, []);
 
         return $registered;
     }

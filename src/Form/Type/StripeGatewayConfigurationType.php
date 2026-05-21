@@ -18,10 +18,6 @@ final class StripeGatewayConfigurationType extends AbstractType
 
     public const PUBLISHABLE_KEY_PATTERN = '/^pk_(test|live)_/';
 
-    public function __construct(private readonly string $factoryName)
-    {
-    }
-
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
@@ -77,16 +73,6 @@ final class StripeGatewayConfigurationType extends AbstractType
                 'required' => false,
                 'label' => 'flux_se_sylius_stripe_plugin.form.gateway_configuration.stripe.enable_express_checkout',
             ])
-        ;
-
-        if ('stripe_checkout' === $this->factoryName) {
-            $builder->add('enable_adaptive_pricing', CheckboxType::class, [
-                'required' => false,
-                'label' => 'flux_se_sylius_stripe_plugin.form.gateway_configuration.stripe.enable_adaptive_pricing',
-            ]);
-        }
-
-        $builder
             ->add('webhook_secret_keys', LiveCollectionType::class, [
                 'label' => 'flux_se_sylius_stripe_plugin.form.gateway_configuration.stripe.webhook_secret_keys',
                 'allow_add' => true,
