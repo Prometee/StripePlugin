@@ -1,4 +1,7 @@
 flux_se_sylius_stripe_plugin:
+    admin:
+        notification:
+            legacy_secret_key: 'La méthode de paiement « %payment_method_name% » utilise une clé secrète legacy (sk_…). Passez à une clé d''API restreinte depuis l''application Sylius Stripe.'
     gateway_factory:
         stripe_checkout: Stripe (Checkout)
         stripe_web_elements: Stripe (Web Elements)
@@ -18,7 +21,8 @@ flux_se_sylius_stripe_plugin:
                     webhook_secret_key: Créez un nouveau webhook endpoint pour créer une clé secrète de webhook sur le tableau de bord Stripe et écoutez plusieurs événements.
                 action:
                     open_stripe_app: Ouvrir l'application Sylius Stripe
-                    webhook_secret_key: Créez un nouveau webhook endpoint.
+                    learn_more_restricted_keys: En savoir plus sur les clés d'API restreintes
+                    webhook_secret_key: Créez un nouveau webhook endpoint
     order_pay:
         web_elements:
             pay: Payer
