@@ -14,7 +14,7 @@ use Symfony\UX\LiveComponent\Form\Type\LiveCollectionType;
 
 final class StripeGatewayConfigurationType extends AbstractType
 {
-    public const SECRET_KEY_PATTERN = '/^(sk|rk)_(test|live)_/';
+    public const SECRET_KEY_PATTERN = '/^rk_(test|live)_/';
 
     public const PUBLISHABLE_KEY_PATTERN = '/^pk_(test|live)_/';
 
@@ -69,6 +69,10 @@ final class StripeGatewayConfigurationType extends AbstractType
                 'required' => false,
                 'label' => 'flux_se_sylius_stripe_plugin.form.gateway_configuration.stripe.use_authorize',
             ])
+            ->add('enable_express_checkout', CheckboxType::class, [
+                'required' => false,
+                'label' => 'flux_se_sylius_stripe_plugin.form.gateway_configuration.stripe.enable_express_checkout',
+            ])
             ->add('webhook_secret_keys', LiveCollectionType::class, [
                 'label' => 'flux_se_sylius_stripe_plugin.form.gateway_configuration.stripe.webhook_secret_keys',
                 'allow_add' => true,
@@ -105,26 +109,6 @@ final class StripeGatewayConfigurationType extends AbstractType
                         'placeholder' => 'whsec_',
                     ],
                 ],
-            ])
-            ->add('payment_method_types', LiveCollectionType::class, [
-                'label' => 'flux_se_sylius_stripe_plugin.form.gateway_configuration.stripe.payment_method_types',
-                'required' => false,
-                'allow_add' => true,
-                'allow_delete' => true,
-                'delete_empty' => true,
-                'button_delete_options' => [
-                    'label' => 'sylius.ui.delete',
-                    'attr' => [
-                        'class' => 'btn btn-danger',
-                    ],
-                ],
-                'button_add_options' => [
-                    'label' => 'sylius.ui.add',
-                    'attr' => [
-                        'class' => 'btn btn-primary',
-                    ],
-                ],
-                'error_bubbling' => false,
             ])
         ;
     }

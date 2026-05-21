@@ -6,6 +6,8 @@ namespace Tests\FluxSE\SyliusStripePlugin\Unit\Form\Type;
 
 use FluxSE\SyliusStripePlugin\Form\Type\StripeGatewayConfigurationType;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints\Regex;
 use Symfony\Component\Validator\Validation;
@@ -20,8 +22,31 @@ final class StripeGatewayConfigurationTypeTest extends TestCase
         $this->validator = Validation::createValidator();
     }
 
+    public function test_buildForm_registers_enable_express_checkout_field(): void
+    {
+        $registered = [];
+        $builder = $this->createMock(FormBuilderInterface::class);
+        $builder
+            ->method('add')
+            ->willReturnCallback(function (string $name, string $type, array $options) use (&$registered, $builder): FormBuilderInterface {
+                $registered[$name] = ['type' => $type, 'options' => $options];
+
+                return $builder;
+            });
+
+        (new StripeGatewayConfigurationType())->buildForm($builder, []);
+
+        self::assertArrayHasKey('enable_express_checkout', $registered, 'enable_express_checkout field is not registered on the form.');
+        self::assertSame(CheckboxType::class, $registered['enable_express_checkout']['type']);
+        self::assertFalse($registered['enable_express_checkout']['options']['required']);
+        self::assertSame(
+            'flux_se_sylius_stripe_plugin.form.gateway_configuration.stripe.enable_express_checkout',
+            $registered['enable_express_checkout']['options']['label'],
+        );
+    }
+
     /** @dataProvider acceptedSecretKeyProvider */
-    public function test_secret_key_field_accepts_secret_and_restricted_keys(string $key): void
+    public function test_secret_key_field_accepts_restricted_keys(string $key): void
     {
         $violations = $this->validator->validate($key, $this->secretKeyConstraints());
 
@@ -31,8 +56,6 @@ final class StripeGatewayConfigurationTypeTest extends TestCase
     /** @return iterable<string, array{string}> */
     public static function acceptedSecretKeyProvider(): iterable
     {
-        yield 'secret key in test mode' => ['sk_test_abc123'];
-        yield 'secret key in live mode' => ['sk_live_abc123'];
         yield 'restricted key in test mode' => ['rk_test_abc123'];
         yield 'restricted key in live mode' => ['rk_live_abc123'];
     }
@@ -49,6 +72,8 @@ final class StripeGatewayConfigurationTypeTest extends TestCase
     public static function rejectedSecretKeyProvider(): iterable
     {
         yield 'empty string' => [''];
+        yield 'standard secret key in test mode' => ['sk_test_abc123'];
+        yield 'standard secret key in live mode' => ['sk_live_abc123'];
         yield 'publishable key pasted by mistake' => ['pk_test_abc123'];
         yield 'webhook signing secret pasted by mistake' => ['whsec_abc123'];
         yield 'random text' => ['random'];
