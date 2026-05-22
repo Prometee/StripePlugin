@@ -240,4 +240,57 @@ Payment methods that already held an `rk_*` value before upgrading need no furth
 **For developers extending the plugin:** if you imported the `SECRET_KEY_PATTERN` constant directly, the value changed 
 (the name did not). Any custom validator allowing `sk_*` will start drifting from the plugin's behaviour after upgrading.
 
+## Admin — gateway configuration form hooks restructured
+
+The admin payment-method form hooks for both `stripe_checkout` and `stripe_web_elements` were reordered and consolidated.
+The three separate hooks rendering the API keys block (`publishable_key`, `secret_key`, `secret_key_info`) are merged
+into one field hook plus its info-box; the field order now leads with API keys and webhook secret keys (the two
+mandatory blocks) before the optional toggles; and all priorities follow a single step-50 scheme (100 between adjacent
+fields, 100 between adjacent info-boxes).
+
+### Hooks renamed / removed
+
+For both `…stripe_checkout.form.*` and `…stripe_web_elements.form.*` anchors (create and update):
+
+- **Removed:** `publishable_key`
+- **Removed:** `secret_key` (deprecated empty stub since 1.0 — `UPGRADE-1.0.md`)
+- **Removed:** `secret_key_info`
+- **Added:** `api_keys` — renders both the publishable and secret key fields, plus the legacy `sk_*` warning
+- **Added:** `api_keys_info` — info-box pointing to the [Sylius Stripe App][link-sylius-stripe-app]
+
+If you registered custom templates under any of the three removed hooks, re-register them under `api_keys` and/or
+`api_keys_info` instead. Custom templates targeting `secret_key` were already deprecated in 1.0 and are not rendered
+anymore.
+
+### Template files renamed / removed
+
+- **Renamed:** `@FluxSESyliusStripePlugin/admin/payment_method/form/publishable_key.html.twig` →
+  `@FluxSESyliusStripePlugin/admin/payment_method/form/api_keys.html.twig`
+- **Renamed:** `@FluxSESyliusStripePlugin/admin/payment_method/form/secret_key_info.html.twig` →
+  `@FluxSESyliusStripePlugin/admin/payment_method/form/api_keys_info.html.twig`
+- **Removed:** `@FluxSESyliusStripePlugin/admin/payment_method/form/secret_key.html.twig`
+
+Sylius test attributes referenced inside these templates (`config-publishable-key`, `config-secret-key`,
+`secret-key-info`, `secret-key-legacy-warning`) are unchanged so existing Behat scenarios keep working.
+
+### New hook priorities
+
+| Hook                            | Old priority | New priority |
+|---------------------------------|--------------|--------------|
+| `api_keys` (was `publishable_key`) | 400       | **500**      |
+| `api_keys_info` (was `secret_key_info`) | 350  | **450**      |
+| `webhook_secret_keys`           | 100          | **400**      |
+| `webhook_secret_key_info`       | 50           | **350**      |
+| `use_authorize`                 | 200          | **300**      |
+| `use_authorize_info`            | 150          | **250**      |
+| `enable_express_checkout`       | 130          | **200**      |
+| `enable_express_checkout_info`  | 120          | **150**      |
+| `enable_adaptive_pricing`*      | 115          | **100**      |
+| `enable_adaptive_pricing_info`* | 110          | **50**       |
+
+\* Registered only for `stripe_checkout` (Adaptive Pricing does not apply to Web Elements).
+
+If you registered hooks at any of the old priorities to slot a custom field between existing ones, recompute against
+the new scheme (step 50).
+
 [link-sylius-stripe-app]: https://marketplace.stripe.com/apps/install/link/com.sylius.stripe
