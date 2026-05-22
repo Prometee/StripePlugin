@@ -23,6 +23,9 @@ final class StripeGatewayConfigurationType extends AbstractType
         $builder
             ->add('publishable_key', TextType::class, [
                 'label' => 'flux_se_sylius_stripe_plugin.form.gateway_configuration.stripe.publishable_key',
+                'attr' => [
+                    'placeholder' => 'pk_',
+                ],
                 'constraints' => [
                     new NotBlank([
                         'message' => 'flux_se_sylius_stripe_plugin.stripe.publishable_key.not_blank',
@@ -45,6 +48,9 @@ final class StripeGatewayConfigurationType extends AbstractType
             ])
             ->add('secret_key', TextType::class, [
                 'label' => 'flux_se_sylius_stripe_plugin.form.gateway_configuration.stripe.secret_key',
+                'attr' => [
+                    'placeholder' => 'rk_',
+                ],
                 'constraints' => [
                     new NotBlank([
                         'message' => 'flux_se_sylius_stripe_plugin.stripe.secret_key.not_blank',
