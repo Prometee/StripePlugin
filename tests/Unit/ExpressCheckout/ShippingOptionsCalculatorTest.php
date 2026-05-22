@@ -115,8 +115,9 @@ final class ShippingOptionsCalculatorTest extends TestCase
         $cart->expects(self::once())->method('setBillingAddress');
 
         $cart->method('getShipments')->willReturn(new ArrayCollection([]));
-        $cart->method('getItemsTotal')->willReturn(2000);
-        $cart->method('getTaxTotal')->willReturn(100);
+        $cart->method('getTotal')->willReturn(2100);
+        $cart->method('getItemsSubtotal')->willReturn(2000);
+        $cart->method('getTaxExcludedTotal')->willReturn(100);
 
         $this->cartContext->method('getCart')->willReturn($cart);
         $this->payloadReader->method('read')->willReturn(new ExpressCheckoutPayload(['address' => ['country' => 'US']]));
@@ -133,38 +134,161 @@ final class ShippingOptionsCalculatorTest extends TestCase
         self::assertSame(2000, $options->lineItems[0]->amount);
         self::assertSame('Tax', $options->lineItems[1]->name);
         self::assertSame(100, $options->lineItems[1]->amount);
+        // No shipment → totalAmount = cart.getTotal(); frontend rejects the change anyway.
+        self::assertSame(2100, $options->totalAmount);
     }
 
-    public function test_it_does_not_reprocess_the_order_when_no_shipping_rate_is_chosen(): void
+    public function test_it_skips_reprocess_when_cart_is_already_aligned_with_first_rate(): void
     {
+        // Cart was already processed with supportedMethods[0] = UPS (which is what
+        // Stripe ECE will preview as the default rate). No need to re-process — cart.getTotal()
+        // already reflects the previewed shipping method.
+        // Real user numbers (Summer Bloom Jeans, US/NY, UPS, tax-excluded channel):
+        // items net $18.58 + tax $1.30 + shipping $9.91 → cart total $29.79.
         $shipment = $this->createMock(ShipmentInterface::class);
         $supportedMethod = $this->createShippingMethod('ups');
         $cart = $this->createReadyCart();
         $cart->method('getCurrencyCode')->willReturn('USD');
         $cart->method('getBillingAddress')->willReturn($this->createMock(AddressInterface::class));
         $cart->method('getShipments')->willReturn(new ArrayCollection([$shipment]));
-        $cart->method('getItemsTotal')->willReturn(5000);
-        $cart->method('getTaxTotal')->willReturn(200);
+        $cart->method('getTotal')->willReturn(2979);
+        $cart->method('getItemsSubtotal')->willReturn(1858);
+        $cart->method('getTaxExcludedTotal')->willReturn(130);
 
         $this->cartContext->method('getCart')->willReturn($cart);
         $this->payloadReader->method('read')->willReturn(new ExpressCheckoutPayload(['address' => ['country' => 'US']]));
         $this->addressNormalizer->method('normalizeAddress')->willReturn($this->createMock(AddressInterface::class));
 
         $this->shippingMethodsResolver->method('getSupportedMethods')->with($shipment)->willReturn([$supportedMethod]);
-        $shipment->method('getMethod')->willReturn(null);
+        // originalMethod == supportedMethods[0] → previewMethod equals originalMethod → skip second pass.
+        $shipment->method('getMethod')->willReturn($supportedMethod);
 
-        $rate = new ExpressCheckoutShippingRate('ups', 'UPS', 599, 'usd');
+        $rate = new ExpressCheckoutShippingRate('ups', 'UPS', 991, 'usd');
         $this->shippingRateAssembler->method('assemble')->willReturn([$rate]);
 
-        // Address-preview path: only ONE OrderProcessor pass — the second one is the optimization we're guarding.
         $this->orderProcessor->expects(self::once())->method('process')->with($cart);
 
-        // The fallback supported method is set on the shipment after rates are assembled.
         $shipment->expects(self::once())->method('setMethod')->with($supportedMethod);
 
         $options = $this->calculator->calculate(new Request());
 
         self::assertSame([$rate], $options->shippingRates);
+        self::assertSame(1858, $options->lineItems[0]->amount);
+        self::assertSame(130, $options->lineItems[1]->amount);
+        self::assertSame(2979, $options->totalAmount);
+    }
+
+    public function test_it_reprocesses_cart_when_previewed_method_differs_from_original(): void
+    {
+        // shippingaddresschange path with no shippingRateId: shipment has no method set yet,
+        // so previewMethod = supportedMethods[0] (FedEx) differs from originalMethod (null).
+        // The calculator runs a second OrderProcessor pass so cart.getTotal() reflects FedEx
+        // (rather than the pre-process state) — keeping cart.getTotal() the authoritative
+        // value the backend will charge.
+        $shipment = $this->createMock(ShipmentInterface::class);
+        $fedex = $this->createShippingMethod('fedex');
+        $cart = $this->createReadyCart();
+        $cart->method('getCurrencyCode')->willReturn('USD');
+        $cart->method('getBillingAddress')->willReturn($this->createMock(AddressInterface::class));
+        $cart->method('getShipments')->willReturn(new ArrayCollection([$shipment]));
+        // After the second process pass with FedEx selected.
+        $cart->method('getTotal')->willReturn(2845);
+        $cart->method('getItemsSubtotal')->willReturn(1858);
+        $cart->method('getTaxExcludedTotal')->willReturn(130);
+
+        $this->cartContext->method('getCart')->willReturn($cart);
+        $this->payloadReader->method('read')->willReturn(new ExpressCheckoutPayload(['address' => ['country' => 'US']]));
+        $this->addressNormalizer->method('normalizeAddress')->willReturn($this->createMock(AddressInterface::class));
+        $this->shippingMethodsResolver->method('getSupportedMethods')->willReturn([$fedex]);
+        $shipment->method('getMethod')->willReturn(null);
+
+        $fedexRate = new ExpressCheckoutShippingRate('fedex', 'FedEx', 857, 'usd');
+        $this->shippingRateAssembler->method('assemble')->willReturn([$fedexRate]);
+
+        $this->orderProcessor->expects(self::exactly(2))->method('process')->with($cart);
+        $shipment->expects(self::once())->method('setMethod')->with($fedex);
+
+        $options = $this->calculator->calculate(new Request());
+
+        self::assertSame(2845, $options->totalAmount);
+        self::assertSame(1858, $options->lineItems[0]->amount);
+        self::assertSame(130, $options->lineItems[1]->amount);
+    }
+
+    public function test_it_skips_tax_line_when_subtotal_already_includes_tax(): void
+    {
+        // Tax-included channel: tax_rate.includedInPrice=true → unit_price is gross,
+        // tax adjustment is NEUTRAL (skipped from cart.getTotal()). The customer sees
+        // $19.88 gross in the catalog; the wallet popup should mirror that, not break
+        // it into a confusing $18.58 + $1.30.
+        $shipment = $this->createMock(ShipmentInterface::class);
+        $ups = $this->createShippingMethod('ups');
+        $cart = $this->createReadyCart();
+        $cart->method('getCurrencyCode')->willReturn('USD');
+        $cart->method('getBillingAddress')->willReturn($this->createMock(AddressInterface::class));
+        $cart->method('getShipments')->willReturn(new ArrayCollection([$shipment]));
+        // Same product ($19.88 gross) + same UPS shipping, but tax baked into unit price.
+        // In tax-included mode, all tax adjustments are NEUTRAL → getTaxExcludedTotal() == 0.
+        $cart->method('getTotal')->willReturn(2979);
+        $cart->method('getItemsSubtotal')->willReturn(1988);
+        $cart->method('getTaxExcludedTotal')->willReturn(0);
+
+        $this->cartContext->method('getCart')->willReturn($cart);
+        $this->payloadReader->method('read')->willReturn(new ExpressCheckoutPayload(['address' => ['country' => 'US']]));
+        $this->addressNormalizer->method('normalizeAddress')->willReturn($this->createMock(AddressInterface::class));
+        $this->shippingMethodsResolver->method('getSupportedMethods')->willReturn([$ups]);
+        $shipment->method('getMethod')->willReturn(null);
+
+        $rate = new ExpressCheckoutShippingRate('ups', 'UPS', 991, 'usd');
+        $this->shippingRateAssembler->method('assemble')->willReturn([$rate]);
+
+        // Two passes: initial + after aligning shipment with rates[0].
+        $this->orderProcessor->expects(self::exactly(2))->method('process')->with($cart);
+
+        $options = $this->calculator->calculate(new Request());
+
+        // Only Subtotal line — Tax would be 0 because tax is already in the gross unit price.
+        self::assertCount(1, $options->lineItems);
+        self::assertSame('Subtotal', $options->lineItems[0]->name);
+        self::assertSame(1988, $options->lineItems[0]->amount);
+        self::assertSame(2979, $options->totalAmount);
+    }
+
+    public function test_it_keeps_shipping_tax_in_total_when_shipping_is_taxable(): void
+    {
+        // Taxable shipping: the shipping method belongs to a tax category, so the
+        // second OrderProcessor pass produces an additional shipping tax adjustment
+        // that ends up in cart.getTotal() and (recursively) in getTaxExcludedTotal().
+        // totalAmount = cart.getTotal() captures the full amount, including shipping tax,
+        // exactly as Sylius will charge it via the PaymentIntent.
+        $shipment = $this->createMock(ShipmentInterface::class);
+        $ups = $this->createShippingMethod('ups');
+        $cart = $this->createReadyCart();
+        $cart->method('getCurrencyCode')->willReturn('USD');
+        $cart->method('getBillingAddress')->willReturn($this->createMock(AddressInterface::class));
+        $cart->method('getShipments')->willReturn(new ArrayCollection([$shipment]));
+        $cart->method('getTotal')->willReturn(3029);
+        $cart->method('getItemsSubtotal')->willReturn(1858);
+        // items_tax 130 + shipping_tax 50 — both non-neutral, both included recursively.
+        $cart->method('getTaxExcludedTotal')->willReturn(180);
+
+        $this->cartContext->method('getCart')->willReturn($cart);
+        $this->payloadReader->method('read')->willReturn(new ExpressCheckoutPayload(['address' => ['country' => 'US']]));
+        $this->addressNormalizer->method('normalizeAddress')->willReturn($this->createMock(AddressInterface::class));
+        $this->shippingMethodsResolver->method('getSupportedMethods')->willReturn([$ups]);
+        $shipment->method('getMethod')->willReturn(null);
+
+        $rate = new ExpressCheckoutShippingRate('ups', 'UPS', 991, 'usd');
+        $this->shippingRateAssembler->method('assemble')->willReturn([$rate]);
+
+        $this->orderProcessor->expects(self::exactly(2))->method('process')->with($cart);
+
+        $options = $this->calculator->calculate(new Request());
+
+        self::assertSame(1858, $options->lineItems[0]->amount);
+        self::assertSame(180, $options->lineItems[1]->amount);
+        // cart.getTotal() — single source of truth, including shipping tax.
+        self::assertSame(3029, $options->totalAmount);
     }
 
     public function test_it_reprocesses_the_order_when_a_shipping_rate_is_chosen(): void
@@ -177,8 +301,10 @@ final class ShippingOptionsCalculatorTest extends TestCase
         $cart->method('getCurrencyCode')->willReturn('USD');
         $cart->method('getBillingAddress')->willReturn($this->createMock(AddressInterface::class));
         $cart->method('getShipments')->willReturn(new ArrayCollection([$shipment]));
-        $cart->method('getItemsTotal')->willReturn(5000);
-        $cart->method('getTaxTotal')->willReturn(200);
+        // After re-processing with chosen rate: cart total reflects items + tax + chosen shipping.
+        $cart->method('getTotal')->willReturn(2916);
+        $cart->method('getItemsSubtotal')->willReturn(1858);
+        $cart->method('getTaxExcludedTotal')->willReturn(130);
 
         $this->cartContext->method('getCart')->willReturn($cart);
         $this->payloadReader->method('read')->willReturn(new ExpressCheckoutPayload([
@@ -188,14 +314,20 @@ final class ShippingOptionsCalculatorTest extends TestCase
         $this->addressNormalizer->method('normalizeAddress')->willReturn($this->createMock(AddressInterface::class));
         $this->shippingMethodsResolver->method('getSupportedMethods')->willReturn([$other, $chosen]);
         $shipment->method('getMethod')->willReturn(null);
-        $this->shippingRateAssembler->method('assemble')->willReturn([]);
+
+        $otherRate = new ExpressCheckoutShippingRate('other', 'Other', 991, 'usd');
+        $chosenRate = new ExpressCheckoutShippingRate('chosen', 'Chosen', 928, 'usd');
+        $this->shippingRateAssembler->method('assemble')->willReturn([$otherRate, $chosenRate]);
 
         // Confirm path: TWO OrderProcessor passes — initial + after the chosen rate is applied.
         $this->orderProcessor->expects(self::exactly(2))->method('process')->with($cart);
 
         $shipment->expects(self::once())->method('setMethod')->with($chosen);
 
-        $this->calculator->calculate(new Request());
+        $options = $this->calculator->calculate(new Request());
+
+        // shippingratechange path: cart was re-processed with the chosen method, so totalAmount == cart.getTotal().
+        self::assertSame(2916, $options->totalAmount);
     }
 
     public function test_it_falls_back_to_the_repository_when_chosen_method_is_not_in_supported_set(): void
@@ -208,8 +340,9 @@ final class ShippingOptionsCalculatorTest extends TestCase
         $cart->method('getCurrencyCode')->willReturn('USD');
         $cart->method('getBillingAddress')->willReturn($this->createMock(AddressInterface::class));
         $cart->method('getShipments')->willReturn(new ArrayCollection([$shipment]));
-        $cart->method('getItemsTotal')->willReturn(0);
-        $cart->method('getTaxTotal')->willReturn(0);
+        $cart->method('getTotal')->willReturn(0);
+        $cart->method('getItemsSubtotal')->willReturn(0);
+        $cart->method('getTaxExcludedTotal')->willReturn(0);
 
         $this->cartContext->method('getCart')->willReturn($cart);
         $this->payloadReader->method('read')->willReturn(new ExpressCheckoutPayload([
