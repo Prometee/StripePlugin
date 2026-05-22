@@ -1,0 +1,10 @@
+sylius_twig_hooks:
+    hooks:
+        'sylius_admin.payment_method.create.content.form.sections.gateway_configuration.stripe_checkout.form': &form_inner_adaptive_pricing
+            enable_adaptive_pricing:
+                template: '@FluxSESyliusStripePlugin/admin/payment_method/form/enable_adaptive_pricing.html.twig'
+                priority: 115
+            enable_adaptive_pricing_info:
+                template: '@FluxSESyliusStripePlugin/admin/payment_method/form/enable_adaptive_pricing_info.html.twig'
+                priority: 110
+        'sylius_admin.payment_method.update.content.form.sections.gateway_configuration.stripe_checkout.form': *form_inner_adaptive_pricing
