@@ -17,6 +17,12 @@ services:
             - name: flux_se.sylius_stripe.provider.web_elements.create.inner_params
               priority: -200
 
+    flux_se.sylius_stripe.provider.web_elements.create.receipt_email:
+        class: FluxSE\SyliusStripePlugin\Provider\WebElements\Create\CustomerEmailProvider
+        tags:
+            - name: flux_se.sylius_stripe.provider.web_elements.create.inner_params
+              priority: -250
+
     flux_se.sylius_stripe.provider.web_elements.create.capture_method.manual:
         class: FluxSE\SyliusStripePlugin\Provider\PaymentIntentCaptureMethodManualProvider
         tags:
