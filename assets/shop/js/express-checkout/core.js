@@ -154,6 +154,16 @@ export async function initExpressCheckout(container) {
         });
     });
 
+    // Stripe ECE validates `elements.amount === sum(lineItems) + selectedShippingRate.amount`
+    // on every resolve(). The backend ships a precomputed `totalAmount` so the frontend
+    // doesn't have to know how lineItems are composed — push it to elements *before*
+    // resolve(), otherwise the wallet popup throws IntegrationError and hangs.
+    //
+    // The `shippingratechange` event in the Stripe ECE spec carries only `event.shippingRate`,
+    // not the address — keep the last address from `shippingaddresschange` so the rate-change
+    // POST still satisfies the backend's address requirement.
+    let lastShippingAddress = null;
+
     expressCheckout.on('shippingaddresschange', async (event) => {
         const result = await postJson(shippingRatesUrl, { address: event.address }, csrfToken);
         if (!result || result.error || !Array.isArray(result.shippingRates) || result.shippingRates.length === 0) {
@@ -161,6 +171,8 @@ export async function initExpressCheckout(container) {
 
             return;
         }
+        lastShippingAddress = event.address;
+        await elements.update({ amount: result.totalAmount });
         event.resolve({
             shippingRates: result.shippingRates,
             lineItems: result.lineItems,
@@ -168,11 +180,22 @@ export async function initExpressCheckout(container) {
     });
 
     expressCheckout.on('shippingratechange', async (event) => {
+        if (!lastShippingAddress) {
+            event.reject();
+
+            return;
+        }
         const result = await postJson(shippingRatesUrl, {
-            address: event.address,
+            address: lastShippingAddress,
             shippingRateId: event.shippingRate.id,
         }, csrfToken);
-        event.resolve({ lineItems: (result && result.lineItems) || [] });
+        if (!result || result.error) {
+            event.reject();
+
+            return;
+        }
+        await elements.update({ amount: result.totalAmount });
+        event.resolve({ lineItems: result.lineItems || [] });
     });
 
     // The wallet popup can fire `confirm` more than once: double-click on the wallet

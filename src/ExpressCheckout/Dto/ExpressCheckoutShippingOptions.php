@@ -13,6 +13,7 @@ final readonly class ExpressCheckoutShippingOptions
     public function __construct(
         public array $shippingRates,
         public array $lineItems,
+        public int $totalAmount,
     ) {
     }
 
@@ -20,6 +21,7 @@ final readonly class ExpressCheckoutShippingOptions
      * @return array{
      *     shippingRates: list<array{id: string, displayName: string, amount: int, currency: string|null}>,
      *     lineItems: list<array{name: string, amount: int}>,
+     *     totalAmount: int,
      * }
      */
     public function toArray(): array
@@ -27,6 +29,7 @@ final readonly class ExpressCheckoutShippingOptions
         return [
             'shippingRates' => array_map(static fn (ExpressCheckoutShippingRate $rate): array => $rate->toArray(), $this->shippingRates),
             'lineItems' => array_map(static fn (ExpressCheckoutLineItem $item): array => $item->toArray(), $this->lineItems),
+            'totalAmount' => $this->totalAmount,
         ];
     }
 }
