@@ -10,36 +10,48 @@ This is where your description should go. Limit it to a paragraph or two. Consid
 
 ## Installation
 
-1. Install the plugin ()
+Two installation paths are supported:
+
+- **Recipe-based** (recommended) — uses the Symfony Flex recipe published in `symfony/recipes-contrib`. Steps below.
+- **Manual** — every step performed by hand. See [docs/INSTALLATION.md](docs/INSTALLATION.md).
+
+### Recipe-based installation
+
+> ℹ️ This path assumes you're using **Symfony Flex** with **yarn** and **Symfony Encore** correctly configured. If you're on a legacy setup without them, refer to the [manual installation](docs/INSTALLATION.md) instead.
+
+1. Prepare your environment
+
+    Before installing the plugin, ensure that your project:
+
+    - Uses **Symfony Flex**
+    - Runs **Sylius ^2.0**
+    - Has **yarn** and **Symfony Encore** correctly configured
+
+2. Allow contrib recipes (one-off, per project):
+    ```shell
+    composer config extra.symfony.allow-contrib true
+    ```
+
+    If prompted during plugin installation, accept the community recipe when asked.
+
+3. Install the plugin via Composer:
     ```shell
     composer require flux-se/sylius-stripe-plugin
     ```
-2. Enable this plugin :
-    ```php
-    <?php
-    
-    # config/bundles.php
-    
-    return [
-        // ...
-        FluxSE\SyliusStripePlugin\FluxSESyliusStripePlugin::class => ['all' => true],
-        // ...
-    ];
-    ```
-3. Import configuration
-    ```yaml
-    # config/packages/flux_se_sylius_stripe.yaml
 
-    imports:
-    # ...
-    - { resource: "@FluxSESyliusStripePlugin/config/config.yaml" }
-    ```
-4. Import shop routes (required for the Express Checkout cart button — Apple Pay, Google Pay, Link, etc.)
-    ```yaml
-    # config/routes/flux_se_sylius_stripe.yaml
+    This installs the plugin and applies the Flex recipe, which registers the bundle, drops in `config/packages` and `config/routes` imports, and appends the asset entrypoint lines.
 
-    flux_se_sylius_stripe_express_checkout_shop:
-        resource: "@FluxSESyliusStripePlugin/config/routes/shop_express_checkout.yaml"
+4. Install and build assets:
+    ```shell
+    bin/console assets:install public
+
+    yarn install
+    yarn encore dev   # or: yarn encore prod
+    ```
+
+5. Clear the cache:
+    ```shell
+    bin/console cache:clear   # add `-e prod` for production
     ```
 
 ## Configuration
