@@ -293,4 +293,17 @@ Sylius test attributes referenced inside these templates (`config-publishable-ke
 If you registered hooks at any of the old priorities to slot a custom field between existing ones, recompute against
 the new scheme (step 50).
 
+## `PaymentStateProcessor` constructor signature changed
+
+`FluxSE\SyliusStripePlugin\StateMachine\PaymentStateProcessor` gained a new constructor argument
+`StripeStateAppliedCheckerInterface $stripeStateAppliedChecker`, inserted **before** the existing
+`array $supportedFactories` argument.
+
+The new service is wired automatically through the abstract `flux_se.sylius_stripe.state_machine.payment_state`
+definition (`config/services/state_machine.yaml`).
+
+**You must migrate if** you instantiate `PaymentStateProcessor` directly in PHP or via a manual service
+definition that does **not** `parent:` the bundled abstract. Add `@flux_se.sylius_stripe.state_machine.stripe_state_applied_checker`
+(or any other `StripeStateAppliedCheckerInterface` implementation) as the sixth constructor argument.
+
 [link-sylius-stripe-app]: https://marketplace.stripe.com/apps/install/link/com.sylius.stripe
