@@ -47,9 +47,7 @@ final readonly class ShippingOptionsCalculator implements ShippingOptionsCalcula
 
         $shippingAddress = $this->addressNormalizer->normalizeAddress($addressFields);
         $cart->setShippingAddress($shippingAddress);
-        if (null === $cart->getBillingAddress()) {
-            $cart->setBillingAddress(clone $shippingAddress);
-        }
+        $cart->setBillingAddress(clone $shippingAddress);
 
         $this->orderProcessor->process($cart);
 
