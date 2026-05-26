@@ -1,12 +1,38 @@
-# StripePlugin
+<p align="center">
+    <a href="https://sylius.com" target="_blank">
+        <picture>
+          <source media="(prefers-color-scheme: dark)" srcset="https://media.sylius.com/sylius-logo-800-dark.png">
+          <source media="(prefers-color-scheme: light)" srcset="https://media.sylius.com/sylius-logo-800.png">
+          <img alt="Sylius Logo" src="https://media.sylius.com/sylius-logo-800.png">
+        </picture>
+    </a>
+</p>
 
-[![Latest Version on Packagist][ico-version]][link-packagist]
-[![Total Downloads][ico-total-downloads]][link-total-downloads]  
-[![Software License][ico-license]](LICENSE)
-[![Build Status][ico-github-actions]][link-github-actions]
+<h1 align="center">Stripe Plugin</h1>
 
+<p align="center">
+    <a href="https://packagist.org/packages/flux-se/sylius-stripe-plugin"><img src="https://img.shields.io/packagist/v/flux-se/sylius-stripe-plugin.svg?style=flat-square" alt="Latest Version on Packagist"></a>
+    <a href="https://packagist.org/packages/flux-se/sylius-stripe-plugin"><img src="https://img.shields.io/packagist/dt/flux-se/sylius-stripe-plugin.svg?style=flat-square" alt="Total Downloads"></a>
+    <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square" alt="Software License"></a>
+    <a href="https://github.com/FLUX-SE/SyliusStripePlugin/actions?query=workflow%3A%22Build%22"><img src="https://github.com/FLUX-SE/SyliusStripePlugin/workflows/Build/badge.svg" alt="Build Status"></a>
+</p>
 
-This is where your description should go. Limit it to a paragraph or two. Consider adding a small example.
+<p align="center">
+    <a href="https://sylius.com/plugins/" target="_blank">
+        <img src="https://sylius.com/assets/badge-official-sylius-plugin.png" width="200" alt="Official Sylius Plugin">
+    </a>
+</p>
+
+<p align="center">
+    Official integration of 
+    <a href="https://stripe.com/" target="_blank">Stripe</a> 
+    with 
+    <a href="https://sylius.com" target="_blank">Sylius</a>.
+</p>
+
+<p align="center">This plugin enables Stripe Checkout and Stripe Web Elements payment gateways with built-in support for Apple Pay, Google Pay, Link and other Stripe payment methods.</p>
+
+---
 
 ## Installation
 
@@ -58,10 +84,8 @@ Two installation paths are supported:
 
  - Go to the admin area.
  - Log in.
- - Click on the left menu item "CONFIGURATION > Payment methods".
+ - Click on the left menu item "Configuration > Payment methods".
  - Create a new payment method type "Stripe (Checkout)" or "Stripe (Web Elements)":
-   
-   ![Create a new payment method][docs-assets-create-payment-method]
  - The next chapter will explain how to fill the payment method creation form.
  
 ### Payment Method configuration
@@ -75,15 +99,9 @@ A form will be displayed, fill-in the required fields :
 
 #### 2. Choose which channels this payment method will be affected to.
 
-#### 3. The gateway configuration ([need info from here](#api-keys)) :
+#### 3. Fill the gateway configuration ([need info from here](#api-keys)).
 
-![Gateway Configuration][docs-assets-gateway-configuration]
-
-![Gateway Configuration][docs-assets-gateway-configuration-authorize]
-
-> _📖 NOTE1: You can add as many webhook secret keys as you need here, however generic usage needs only one._
-
-> _📖 NOTE2: the screenshot contains false test credentials._
+> _📖 NOTE: You can add as many webhook secret keys as you need here, however generic usage needs only one._
 
 #### 4. Give to this payment method a display name (and a description) for each language you need.
 
@@ -91,7 +109,7 @@ Finally, click on the "Create" button to save your new payment method.
 
 ### API keys
 
-**We recommend** installing the [Sylius Stripe App][link-sylius-stripe-app] - its Settings Page exposes both keys 
+**We recommend** installing the [Sylius Stripe App][link-sylius-stripe-app] — its Settings Page exposes both keys 
 this plugin needs:
 
 - the publishable key (`pk_test_…` / `pk_live_…`) for the "Publishable key" field,
@@ -110,7 +128,7 @@ Restricted API keys are Stripe's officially recommended replacement for standard
 
 ### Webhook key
 
-Got to :
+Got to:
 
 https://dashboard.stripe.com/test/webhooks
 
@@ -142,10 +160,8 @@ https://localhost/payment-methods/my_shop_stripe_checkout
 Webhooks are triggered by Stripe on their server to your server.
 If the server is into a private network, Stripe won't be allowed to reach your server.
 
-Stripe provide an alternate way to catch those webhook events, you can use
-`Stripe cli` : https://stripe.com/docs/stripe-cli
-Follow the link and install `Stripe cli`, then use those command line to get
-your webhook key :
+Stripe provide an alternate way to catch those webhook events, you can use `Stripe CLI`: https://stripe.com/docs/stripe-cli
+Follow the link and install `Stripe CLI`, then use those command line to get your webhook key:
 
 First login to your Stripe account (needed every 90 days) :
 
@@ -161,6 +177,7 @@ Then start to listen for the Stripe events (minimal ones are used here), forward
        --events checkout.session.completed,checkout.session.async_payment_failed,checkout.session.async_payment_succeeded,checkout.session.expired \
        --forward-to https://localhost/payment-methods/my_shop_stripe_checkout
     ```
+
  2. Example with `my_shop_stripe_web_elements` as payment method code:
     ```shell
     stripe listen \
@@ -170,24 +187,15 @@ Then start to listen for the Stripe events (minimal ones are used here), forward
 
 > 💡 Replace --forward-to argument value with the right one you need.
 
-When the command finishes, a webhook secret key is displayed, copy it to your
-Payment method configuration edit form in the Sylius admin.
+When the command finishes, a webhook secret key is displayed, copy it to your Payment method configuration edit form in the Sylius admin.
 
 > ⚠️ Using the command `stripe trigger checkout.session.completed` will always result in a `500 error`,
 > because the test object will not embed any usable metadata.
 
 ## Advanced documentation
 
-- [API (Sylius using APIPlatform)](docs/API.md)
+- [Manual installation](docs/INSTALLATION.md)
 - [Webhook events](docs/WEBHOOK-EVENTS.md)
-
-## Changelog
-
-Please see [CHANGELOG](CHANGELOG.md) for more information on what has changed recently.
-
-## Contributing
-
-Please see [CONTRIBUTING](CONTRIBUTING.md) for details.
 
 ## Security Vulnerabilities
 
