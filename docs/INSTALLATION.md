@@ -1,7 +1,7 @@
 # Manual installation
 
 This guide walks through installing the plugin step by step. If you have Symfony Flex with contrib recipes enabled, 
-prefer the recipe-based path described in the [README](../README.md#recipe-based-installation) — it automates steps 2–6 below.
+prefer the recipe-based path described in the [README](../README.md#recipe-based-installation) — it automates steps 2–4 below.
 
 1. Install the plugin
     ```shell
