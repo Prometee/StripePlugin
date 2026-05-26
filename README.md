@@ -65,7 +65,7 @@ Two installation paths are supported:
     composer require flux-se/sylius-stripe-plugin
     ```
 
-    This installs the plugin and applies the Flex recipe, which registers the bundle, drops in the `config/packages` import, and appends the asset entrypoint lines.
+    This installs the plugin and applies the Flex recipe, which registers the bundle, drops in `config/packages` and `config/routes` imports, and appends the asset entrypoint lines.
 
 4. Install and build assets:
     ```shell
@@ -109,20 +109,11 @@ Finally, click on the "Create" button to save your new payment method.
 
 ### API keys
 
-**We recommend** installing the [Sylius Stripe App][link-sylius-stripe-app] — its Settings Page exposes both keys 
-this plugin needs:
+Install the [Sylius Stripe App][link-sylius-stripe-app] on your Stripe account.
+Its Settings Page exposes both keys this plugin needs:
 
 - the publishable key (`pk_test_…` / `pk_live_…`) for the "Publishable key" field,
-- a Restricted API Key (`rk_test_…` / `rk_live_…`) for the "Restricted API key (recommended) or secret key" field.
-
-The App ships with the minimum scopes the plugin needs, and the Restricted API Key will be the only supported option 
-for the `secret_key` field in plugin 2.0.
-
-Alternatively, you can pick both keys directly from the Stripe Dashboard:
-
-https://dashboard.stripe.com/test/apikeys
-
-In that case, paste a standard secret key (`sk_test_…` / `sk_live_…`) into the "Restricted API key (recommended) or secret key" field.
+- a Restricted API Key (`rk_test_…` / `rk_live_…`) for the "Restricted API key" field.
 
 Restricted API keys are Stripe's officially recommended replacement for standard secret keys, see [Stripe's documentation on restricted API keys][link-stripe-restricted-keys] for the full rationale.
 
@@ -138,6 +129,22 @@ Then create a new endpoint with those events:
 |-|-|-|
 | Webhook events |  - `checkout.session.completed`<br> - `checkout.session.async_payment_failed`<br> - `checkout.session.async_payment_succeeded`<br> - `checkout.session.expired`<br> - `setup_intent.canceled` (⚠️ Only when using `setup` mode)<br> - `setup_intent.succeeded`  (⚠️ Only when using `setup` mode) |  - `payment_intent.canceled`<br> - `payment_intent.succeeded`<br> - `setup_intent.canceled` (⚠️ Only when using `setup` mode)<br> - `setup_intent.succeeded`  (⚠️ Only when using `setup` mode) |
 
+> 💡 **Express Checkout on the cart page** (`enable_express_checkout` toggle on) always
+> creates a PaymentIntent on Stripe regardless of the gateway type. If you enable it on
+> a `stripe_checkout` PaymentMethod, **add these events to that endpoint** in addition
+> to the `checkout.session.*` ones listed above:
+> - `payment_intent.succeeded`
+> - `payment_intent.canceled`
+> - `payment_intent.processing`
+>
+> For `stripe_web_elements` the same `payment_intent.*` events are already required by
+> the regular flow — no extra subscription is needed when the toggle is on.
+>
+> See [Express Checkout on the cart page](docs/EXPRESS-CHECKOUT.md) for the full setup
+> (domain registration, wallet activation, local testing). Which wallets actually appear
+> on the button (Apple Pay, Google Pay, Link, PayPal, Amazon Pay) is decided by your
+> Stripe Dashboard configuration and the customer's browser — the plugin does not
+> hard-code that list.
 
 The URL to fill is the route named `sylius_payment_method_notify` with the `{code}`
 param equal to the `payment method code`, here is an example :
@@ -184,6 +191,14 @@ Then start to listen for the Stripe events (minimal ones are used here), forward
        --events payment_intent.canceled,payment_intent.succeeded \
        --forward-to https://localhost/payment-methods/my_shop_stripe_web_elements
     ```
+ 3. Example with `my_shop_stripe_checkout` as payment method code **and Express Checkout enabled**
+    (merges the `checkout.session.*` events of the regular flow with the `payment_intent.*`
+    events emitted by the cart-page wallet flow):
+    ```shell
+    stripe listen \
+       --events checkout.session.completed,checkout.session.async_payment_failed,checkout.session.async_payment_succeeded,checkout.session.expired,payment_intent.succeeded,payment_intent.canceled,payment_intent.processing \
+       --forward-to https://localhost/payment-methods/my_shop_stripe_checkout
+    ```
 
 > 💡 Replace --forward-to argument value with the right one you need.
 
@@ -196,6 +211,8 @@ When the command finishes, a webhook secret key is displayed, copy it to your Pa
 
 - [Manual installation](docs/INSTALLATION.md)
 - [Webhook events](docs/WEBHOOK-EVENTS.md)
+- [Express Checkout on the cart page](docs/EXPRESS-CHECKOUT.md)
+- [Adaptive Pricing on Stripe Checkout](docs/ADAPTIVE-PRICING.md)
 
 ## Security Vulnerabilities
 

@@ -1,0 +1,5 @@
+{% set form = hookable_metadata.context.form.gatewayConfig.config.enable_adaptive_pricing %}
+
+<div class="col-12 col-md-6 mt-4">
+    {{ form_row(form, sylius_test_form_attribute('enable-adaptive-pricing')) }}
+</div>

@@ -14,7 +14,7 @@ use Symfony\UX\LiveComponent\Form\Type\LiveCollectionType;
 
 final class StripeGatewayConfigurationType extends AbstractType
 {
-    public const SECRET_KEY_PATTERN = '/^(sk|rk)_(test|live)_/';
+    public const SECRET_KEY_PATTERN = '/^rk_(test|live)_/';
 
     public const PUBLISHABLE_KEY_PATTERN = '/^pk_(test|live)_/';
 
@@ -23,6 +23,9 @@ final class StripeGatewayConfigurationType extends AbstractType
         $builder
             ->add('publishable_key', TextType::class, [
                 'label' => 'flux_se_sylius_stripe_plugin.form.gateway_configuration.stripe.publishable_key',
+                'attr' => [
+                    'placeholder' => 'pk_',
+                ],
                 'constraints' => [
                     new NotBlank([
                         'message' => 'flux_se_sylius_stripe_plugin.stripe.publishable_key.not_blank',
@@ -45,6 +48,9 @@ final class StripeGatewayConfigurationType extends AbstractType
             ])
             ->add('secret_key', TextType::class, [
                 'label' => 'flux_se_sylius_stripe_plugin.form.gateway_configuration.stripe.secret_key',
+                'attr' => [
+                    'placeholder' => 'rk_',
+                ],
                 'constraints' => [
                     new NotBlank([
                         'message' => 'flux_se_sylius_stripe_plugin.stripe.secret_key.not_blank',
@@ -68,6 +74,10 @@ final class StripeGatewayConfigurationType extends AbstractType
             ->add('use_authorize', CheckboxType::class, [
                 'required' => false,
                 'label' => 'flux_se_sylius_stripe_plugin.form.gateway_configuration.stripe.use_authorize',
+            ])
+            ->add('enable_express_checkout', CheckboxType::class, [
+                'required' => false,
+                'label' => 'flux_se_sylius_stripe_plugin.form.gateway_configuration.stripe.enable_express_checkout',
             ])
             ->add('webhook_secret_keys', LiveCollectionType::class, [
                 'label' => 'flux_se_sylius_stripe_plugin.form.gateway_configuration.stripe.webhook_secret_keys',
@@ -105,26 +115,6 @@ final class StripeGatewayConfigurationType extends AbstractType
                         'placeholder' => 'whsec_',
                     ],
                 ],
-            ])
-            ->add('payment_method_types', LiveCollectionType::class, [
-                'label' => 'flux_se_sylius_stripe_plugin.form.gateway_configuration.stripe.payment_method_types',
-                'required' => false,
-                'allow_add' => true,
-                'allow_delete' => true,
-                'delete_empty' => true,
-                'button_delete_options' => [
-                    'label' => 'sylius.ui.delete',
-                    'attr' => [
-                        'class' => 'btn btn-danger',
-                    ],
-                ],
-                'button_add_options' => [
-                    'label' => 'sylius.ui.add',
-                    'attr' => [
-                        'class' => 'btn btn-primary',
-                    ],
-                ],
-                'error_bubbling' => false,
             ])
         ;
     }
