@@ -92,9 +92,9 @@ The plugin now ships an additional shop routes file that the bundle does **not**
 application's route configuration:
 
 ```yaml
-# config/routes/flux_se_sylius_stripe.yaml
+# config/routes/sylius_stripe.yaml
 
-flux_se_sylius_stripe_express_checkout_shop:
+sylius_stripe_express_checkout_shop:
     resource: "@FluxSESyliusStripePlugin/config/routes/shop_express_checkout.yaml"
 ```
 
@@ -102,9 +102,9 @@ The file `config/routes/shop_express_checkout.yaml` registers three endpoints un
 
 | Route name | Method | Path |
 |---|---|---|
-| `flux_se_sylius_stripe_express_checkout_configuration` | `GET` | `/express-checkout/configuration` |
-| `flux_se_sylius_stripe_express_checkout_shipping_rates` | `POST` | `/express-checkout/shipping-rates` |
-| `flux_se_sylius_stripe_express_checkout_confirm` | `POST` | `/express-checkout/confirm` |
+| `sylius_stripe_express_checkout_configuration` | `GET` | `/express-checkout/configuration` |
+| `sylius_stripe_express_checkout_shipping_rates` | `POST` | `/express-checkout/shipping-rates` |
+| `sylius_stripe_express_checkout_confirm` | `POST` | `/express-checkout/confirm` |
 
 Without the import, `GET /express-checkout/configuration` returns 404, the cart-page JavaScript silently
 hides itself, and the wallet button never appears — there is no visible error.
