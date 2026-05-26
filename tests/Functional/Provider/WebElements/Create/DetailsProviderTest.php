@@ -97,8 +97,16 @@ class DetailsProviderTest extends KernelTestCase
         $expected = [
             'amount' => 1500,
             'currency' => 'USD',
+            'receipt_email' => 'oliver@doe.com',
             'metadata' => [
                 'token_hash' => '',
+                'order_number' => '000000001',
+                'order_total' => '1500',
+                'currency' => 'USD',
+                'locale' => 'en_US',
+                'product_categories' => 'mugs,tea',
+                'first_order' => 'yes',
+                'customer_email' => 'oliver@doe.com',
             ],
         ];
 
