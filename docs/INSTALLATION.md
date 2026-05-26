@@ -1,6 +1,6 @@
 # Manual installation
 
-This guide walks through installing the plugin step by step. If you have Symfony Flex with contrib recipes enabled, 
+This guide walks through installing the plugin step by step. If you have Symfony Flex with contrib recipes enabled,
 prefer the recipe-based path described in the [README](../README.md#recipe-based-installation) — it automates steps 2–5 below.
 
 1. Install the plugin
@@ -57,7 +57,7 @@ prefer the recipe-based path described in the [README](../README.md#recipe-based
     yarn encore dev   # or: yarn encore prod
     ```
 
-8. Clear the cache
+7. Clear the cache
     ```shell
     bin/console cache:clear
     ```
