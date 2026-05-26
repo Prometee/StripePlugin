@@ -1,5 +1,38 @@
 # UPGRADE FROM 1.0.8 to 1.0.9
 
+### New plugin assets must be imported in your app
+
+The plugin now ships its own asset entrypoints under `assets/admin/` and `assets/shop/`. The admin entrypoint adds 
+styling required by the redesigned payment method gateway configuration form — without it, fields in the admin form 
+render misaligned.
+
+Import them from your application's Encore entrypoints:
+
+```js
+// assets/admin/entrypoint.js
+
+// ...
+import '../../vendor/flux-se/sylius-stripe-plugin/assets/admin/entrypoint';
+```
+```js
+// assets/shop/entrypoint.js
+
+// ...
+import '../../vendor/flux-se/sylius-stripe-plugin/assets/shop/entrypoint';
+```
+
+Then rebuild assets:
+
+```shell
+bin/console assets:install public
+
+yarn install
+yarn encore dev   # or: yarn encore prod
+```
+
+Fresh installs using the Symfony Flex contrib recipe get these imports appended automatically — this step is only 
+required for projects upgrading in place. See [docs/INSTALLATION.md](docs/INSTALLATION.md) for the full manual setup.
+
 ### `secret_key` Twig hook deprecated
 
 The `secret_key` hook in the payment method gateway configuration form is deprecated and will be removed in 2.0.
