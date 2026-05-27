@@ -293,4 +293,36 @@ Sylius test attributes referenced inside these templates (`config-publishable-ke
 If you registered hooks at any of the old priorities to slot a custom field between existing ones, recompute against
 the new scheme (step 50).
 
+## `payment_intent.*` webhook events required for `stripe_checkout` with `use authorize`
+
+In 2.0 the Checkout Session creation request propagates the Sylius `PaymentRequest` `token_hash` into 
+`payment_intent_data.metadata` (and therefore onto the resulting `PaymentIntent` and `Charge`). Before this change, 
+`payment_intent.*` events emitted by a `stripe_checkout` PaymentIntent were unresolvable by the plugin (the resolver 
+looks the `PaymentRequest` up by `metadata.token_hash`) and returned HTTP 500.
+
+As a consequence, **Stripe Dashboard-side capture and cancel of an authorized PaymentIntent now synchronize back to 
+Sylius via webhooks** — which means the Stripe webhook endpoint of every `stripe_checkout` PaymentMethod with 
+`use authorize` ON must subscribe to:
+
+- `payment_intent.succeeded`
+- `payment_intent.canceled`
+- `payment_intent.processing`
+
+These are the same three events the Express Checkout migration already requires (see the section above) — if you applied 
+that migration on a PaymentMethod with `use authorize` ON, you are already done; the events are needed regardless of 
+whether the ECE toggle is on.
+
+Without these events the following stops working:
+
+- Capturing the authorized PaymentIntent in the Stripe Dashboard leaves the order stuck in `Authorized` while the money 
+  is already taken (Sylius / Stripe state mismatch).
+- Cancelling the authorized PaymentIntent in the Stripe Dashboard does not propagate to Sylius (Payment stays
+  `Authorized`).
+- The webhook can no longer act as a fallback when a Sylius admin "Complete" / "Cancel" action on an Authorized order 
+  fails mid-flight (the Stripe API call may have already succeeded by then).
+
+**Migration:** for every existing `stripe_checkout` PaymentMethod with `use authorize` ON, open the matching webhook 
+endpoint in the Stripe Dashboard and add the three events above. The [`docs/WEBHOOK-EVENTS.md`](docs/WEBHOOK-EVENTS.md) 
+file has the full per-gateway / per-mode matrix.
+
 [link-sylius-stripe-app]: https://marketplace.stripe.com/apps/install/link/com.sylius.stripe

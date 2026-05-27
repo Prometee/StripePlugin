@@ -92,6 +92,12 @@ services:
             - name: flux_se.sylius_stripe.provider.checkout.create.payment_intent_data.metadata
               priority: -200
 
+    flux_se.sylius_stripe.provider.checkout.create.payment_intent_data.metadata.token_hash:
+        class: FluxSE\SyliusStripePlugin\Provider\TokenHashMetadataProvider
+        tags:
+            - name: flux_se.sylius_stripe.provider.checkout.create.payment_intent_data.metadata
+              priority: -250
+
     flux_se.sylius_stripe.provider.checkout.create.line_items:
         class: FluxSE\SyliusStripePlugin\Provider\Checkout\Create\LineItemsProvider
         arguments:

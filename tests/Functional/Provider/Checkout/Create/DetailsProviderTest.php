@@ -89,6 +89,7 @@ class DetailsProviderTest extends KernelTestCase
         $paymentRequest = $fixtures[$paymentRequestName];
 
         $expectedDetails['metadata']['token_hash'] = $paymentRequest->getId();
+        $expectedDetails['payment_intent_data']['metadata']['token_hash'] = $paymentRequest->getId();
         if (null === $paymentRequest->getPayload()) {
             // Using Shop UI, the locale context is given by the current request context, here we forced it.
             $locale = 'en_US';
