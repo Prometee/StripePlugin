@@ -330,6 +330,36 @@ final class ShippingOptionsCalculatorTest extends TestCase
         self::assertSame(2916, $options->totalAmount);
     }
 
+    public function test_it_overrides_existing_billing_address_with_the_wallet_address(): void
+    {
+        $shipment = $this->createMock(ShipmentInterface::class);
+        $cart = $this->createReadyCart();
+        $cart->method('getCurrencyCode')->willReturn('USD');
+        $cart->method('getShipments')->willReturn(new ArrayCollection([$shipment]));
+        $cart->method('getTotal')->willReturn(0);
+        $cart->method('getItemsSubtotal')->willReturn(0);
+        $cart->method('getTaxExcludedTotal')->willReturn(0);
+
+        $existingBilling = $this->createMock(AddressInterface::class);
+        $cart->method('getBillingAddress')->willReturn($existingBilling);
+
+        $walletShipping = $this->createMock(AddressInterface::class);
+        $this->addressNormalizer->method('normalizeAddress')->willReturn($walletShipping);
+        $this->payloadReader->method('read')->willReturn(new ExpressCheckoutPayload(['address' => ['country' => 'US']]));
+
+        $this->cartContext->method('getCart')->willReturn($cart);
+        $this->shippingMethodsResolver->method('getSupportedMethods')->willReturn([$this->createShippingMethod('ups')]);
+        $shipment->method('getMethod')->willReturn(null);
+        $this->shippingRateAssembler->method('assemble')->willReturn([]);
+
+        $cart->expects(self::once())->method('setShippingAddress')->with($walletShipping);
+        $cart->expects(self::once())
+            ->method('setBillingAddress')
+            ->with(self::callback(static fn (AddressInterface $address): bool => $address !== $existingBilling));
+
+        $this->calculator->calculate(new Request());
+    }
+
     public function test_it_falls_back_to_the_repository_when_chosen_method_is_not_in_supported_set(): void
     {
         $shipment = $this->createMock(ShipmentInterface::class);

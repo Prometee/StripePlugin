@@ -293,6 +293,7 @@ Sylius test attributes referenced inside these templates (`config-publishable-ke
 If you registered hooks at any of the old priorities to slot a custom field between existing ones, recompute against
 the new scheme (step 50).
 
+<<<<<<< SY-675-bug-3-checkout-token-hash
 ## `payment_intent.*` webhook events required for `stripe_checkout` with `use authorize`
 
 In 2.0 the Checkout Session creation request propagates the Sylius `PaymentRequest` `token_hash` into 
@@ -324,5 +325,19 @@ Without these events the following stops working:
 **Migration:** for every existing `stripe_checkout` PaymentMethod with `use authorize` ON, open the matching webhook 
 endpoint in the Stripe Dashboard and add the three events above. The [`docs/WEBHOOK-EVENTS.md`](docs/WEBHOOK-EVENTS.md) 
 file has the full per-gateway / per-mode matrix.
+=======
+## `PaymentStateProcessor` constructor signature changed
+
+`FluxSE\SyliusStripePlugin\StateMachine\PaymentStateProcessor` gained a new constructor argument
+`StripeStateAppliedCheckerInterface $stripeStateAppliedChecker`, inserted **before** the existing
+`array $supportedFactories` argument.
+
+The new service is wired automatically through the abstract `flux_se.sylius_stripe.state_machine.payment_state`
+definition (`config/services/state_machine.yaml`).
+
+**You must migrate if** you instantiate `PaymentStateProcessor` directly in PHP or via a manual service
+definition that does **not** `parent:` the bundled abstract. Add `@flux_se.sylius_stripe.state_machine.stripe_state_applied_checker`
+(or any other `StripeStateAppliedCheckerInterface` implementation) as the sixth constructor argument.
+>>>>>>> 2.0
 
 [link-sylius-stripe-app]: https://marketplace.stripe.com/apps/install/link/com.sylius.stripe
