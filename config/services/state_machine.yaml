@@ -1,5 +1,7 @@
 services:
-    
+    flux_se.sylius_stripe.state_machine.stripe_state_applied_checker:
+        class: FluxSE\SyliusStripePlugin\StateMachine\StripeStateAppliedChecker
+
     flux_se.sylius_stripe.state_machine.payment_state:
         abstract: true
         class: FluxSE\SyliusStripePlugin\StateMachine\PaymentStateProcessor
@@ -9,8 +11,9 @@ services:
             - '@sylius.factory.payment_request'
             - '@sylius.repository.payment_request'
             - '@sylius.announcer.payment_request'
+            - '@flux_se.sylius_stripe.state_machine.stripe_state_applied_checker'
             - '%flux_se.sylius_stripe.factories%'
-    
+
     flux_se.sylius_stripe.state_machine.refund:
         public: true
         parent: flux_se.sylius_stripe.state_machine.payment_state
@@ -18,7 +21,7 @@ services:
             - []
             - !php/const Sylius\Component\Payment\Model\PaymentInterface::STATE_REFUNDED
             - !php/const Sylius\Component\Payment\Model\PaymentRequestInterface::ACTION_REFUND
-    
+
     flux_se.sylius_stripe.state_machine.cancel:
         public: true
         parent: flux_se.sylius_stripe.state_machine.payment_state
@@ -27,8 +30,7 @@ services:
               1: !php/const Sylius\Component\Payment\Model\PaymentInterface::STATE_AUTHORIZED
             - !php/const Sylius\Component\Payment\Model\PaymentInterface::STATE_CANCELLED
             - !php/const Sylius\Component\Payment\Model\PaymentRequestInterface::ACTION_CANCEL
-        
-    
+
     flux_se.sylius_stripe.state_machine.capture_authorized:
         public: true
         parent: flux_se.sylius_stripe.state_machine.payment_state
