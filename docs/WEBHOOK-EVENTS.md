@@ -8,6 +8,35 @@ This plugin will be able to listen to webhook events which are related to a Syli
 If you want to listen to other events, you will have to create your own route and controller.
 However, you will be able to use services provided by this plugin to handle and verify the Stripe events.
 
+## Required Stripe events per gateway and mode
+
+The events your Stripe webhook endpoint must subscribe to depend on the gateway type, the `use authorize` flag, and on
+whether Express Checkout (ECE) on the cart page is enabled.
+
+| Gateway | `use authorize` | Express Checkout | Required events |
+|---|:-:|:-:|---|
+| `stripe_checkout` | OFF | OFF | `checkout.session.completed`, `checkout.session.expired`, `checkout.session.async_payment_failed`, `checkout.session.async_payment_succeeded` |
+| `stripe_checkout` | **ON** | OFF | the four `checkout.session.*` above **and** `payment_intent.succeeded`, `payment_intent.canceled`, `payment_intent.processing` |
+| `stripe_checkout` | OFF | **ON** | the four `checkout.session.*` above **and** `payment_intent.succeeded`, `payment_intent.canceled`, `payment_intent.processing` |
+| `stripe_checkout` | **ON** | **ON** | the four `checkout.session.*` above **and** `payment_intent.succeeded`, `payment_intent.canceled`, `payment_intent.processing` |
+| `stripe_web_elements` | any | any | `payment_intent.succeeded`, `payment_intent.canceled`, `payment_intent.processing` |
+| any using `setup` mode | — | — | add `setup_intent.succeeded`, `setup_intent.canceled` on top of the rows above |
+
+Why the `payment_intent.*` events matter for `stripe_checkout`:
+
+- **`use authorize` ON** — when a merchant captures or cancels the authorized PaymentIntent directly in the Stripe
+  Dashboard (instead of via the Sylius admin), only a `payment_intent.*` event is emitted. Without subscribing to it,
+  Sylius never learns about the Dashboard-side change and the order is left stuck in `Authorized` indefinitely.
+- **`use authorize` ON** also lets the webhook act as a fallback for the Sylius admin "Complete" / "Cancel" actions —
+  the admin action itself can fail mid-flight while the Stripe API call already succeeded; the matching
+  `payment_intent.*` event rescues the order state in that case.
+- **Express Checkout on the cart page** always creates a PaymentIntent (never a Checkout Session), regardless of the
+  gateway type. See [Express Checkout](EXPRESS-CHECKOUT.md) for the full feature description.
+
+> 💡 Subscribing to the three `payment_intent.*` events on a `stripe_checkout` endpoint is harmless even when neither
+> flag is on — the plugin resolves each event against the Sylius `PaymentRequest` via the `token_hash` metadata and
+> returns 2xx without state changes if there is nothing to transition.
+
 ## How are webhook events listened to using this plugin?
 Here is how the Sylius `PaymentRequest` notify process is working:
 

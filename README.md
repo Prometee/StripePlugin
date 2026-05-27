@@ -127,24 +127,29 @@ Then create a new endpoint with those events:
 
 | Gateway | `stripe_checkout` | `stripe_web_elements` |
 |-|-|-|
-| Webhook events |  - `checkout.session.completed`<br> - `checkout.session.async_payment_failed`<br> - `checkout.session.async_payment_succeeded`<br> - `checkout.session.expired`<br> - `setup_intent.canceled` (⚠️ Only when using `setup` mode)<br> - `setup_intent.succeeded`  (⚠️ Only when using `setup` mode) |  - `payment_intent.canceled`<br> - `payment_intent.succeeded`<br> - `setup_intent.canceled` (⚠️ Only when using `setup` mode)<br> - `setup_intent.succeeded`  (⚠️ Only when using `setup` mode) |
+| Webhook events |  - `checkout.session.completed`<br> - `checkout.session.async_payment_failed`<br> - `checkout.session.async_payment_succeeded`<br> - `checkout.session.expired`<br> - `payment_intent.succeeded` (⚠️ Required when `use authorize` is ON or Express Checkout is enabled — see note below)<br> - `payment_intent.canceled` (⚠️ Required when `use authorize` is ON or Express Checkout is enabled — see note below)<br> - `payment_intent.processing` (⚠️ Required when `use authorize` is ON or Express Checkout is enabled — see note below)<br> - `setup_intent.canceled` (⚠️ Only when using `setup` mode)<br> - `setup_intent.succeeded`  (⚠️ Only when using `setup` mode) |  - `payment_intent.canceled`<br> - `payment_intent.succeeded`<br> - `payment_intent.processing`<br> - `setup_intent.canceled` (⚠️ Only when using `setup` mode)<br> - `setup_intent.succeeded`  (⚠️ Only when using `setup` mode) |
 
-> 💡 **Express Checkout on the cart page** (`enable_express_checkout` toggle on) always
-> creates a PaymentIntent on Stripe regardless of the gateway type. If you enable it on
-> a `stripe_checkout` PaymentMethod, **add these events to that endpoint** in addition
-> to the `checkout.session.*` ones listed above:
-> - `payment_intent.succeeded`
-> - `payment_intent.canceled`
-> - `payment_intent.processing`
+> 💡 **`payment_intent.*` for `stripe_checkout`.** The three `payment_intent.*` events
+> are required on a `stripe_checkout` PaymentMethod endpoint whenever **at least one** of
+> the following is true:
+>
+> - **`use authorize` is ON** — needed so Stripe Dashboard capture/cancel of the
+>   authorized PaymentIntent syncs back to Sylius, and so the webhook acts as a fallback
+>   when a Sylius admin action on an Authorized order can't reach Stripe directly.
+> - **Express Checkout on the cart page** (`enable_express_checkout` toggle on) — ECE
+>   always creates a PaymentIntent on Stripe regardless of the gateway type. See
+>   [Express Checkout on the cart page](docs/EXPRESS-CHECKOUT.md) for the full setup
+>   (domain registration, wallet activation, local testing).
+>
+> Without these events Sylius silently misses the corresponding state transitions
+> (e.g. Authorized → Paid after Dashboard capture).
 >
 > For `stripe_web_elements` the same `payment_intent.*` events are already required by
-> the regular flow — no extra subscription is needed when the toggle is on.
+> the regular flow — `use authorize` and the ECE toggle do not change that list.
 >
-> See [Express Checkout on the cart page](docs/EXPRESS-CHECKOUT.md) for the full setup
-> (domain registration, wallet activation, local testing). Which wallets actually appear
-> on the button (Apple Pay, Google Pay, Link, PayPal, Amazon Pay) is decided by your
-> Stripe Dashboard configuration and the customer's browser — the plugin does not
-> hard-code that list.
+> Which wallets actually appear on the Express Checkout button (Apple Pay, Google Pay,
+> Link, PayPal, Amazon Pay) is decided by your Stripe Dashboard configuration and the
+> customer's browser — the plugin does not hard-code that list.
 
 The URL to fill is the route named `sylius_payment_method_notify` with the `{code}`
 param equal to the `payment method code`, here is an example :
@@ -178,7 +183,8 @@ stripe login
 
 Then start to listen for the Stripe events (minimal ones are used here), forwarding request to your local server :
 
- 1. Example with `my_shop_stripe_checkout` as payment method code:
+ 1. Example with `my_shop_stripe_checkout` as payment method code
+    (regular Checkout flow, `use authorize` OFF, Express Checkout OFF):
     ```shell
     stripe listen \
        --events checkout.session.completed,checkout.session.async_payment_failed,checkout.session.async_payment_succeeded,checkout.session.expired \
@@ -188,12 +194,13 @@ Then start to listen for the Stripe events (minimal ones are used here), forward
  2. Example with `my_shop_stripe_web_elements` as payment method code:
     ```shell
     stripe listen \
-       --events payment_intent.canceled,payment_intent.succeeded \
+       --events payment_intent.canceled,payment_intent.succeeded,payment_intent.processing \
        --forward-to https://localhost/payment-methods/my_shop_stripe_web_elements
     ```
- 3. Example with `my_shop_stripe_checkout` as payment method code **and Express Checkout enabled**
-    (merges the `checkout.session.*` events of the regular flow with the `payment_intent.*`
-    events emitted by the cart-page wallet flow):
+ 3. Example with `my_shop_stripe_checkout` as payment method code **with `use authorize`
+    ON or Express Checkout enabled** (adds the `payment_intent.*` events on top of the
+    `checkout.session.*` ones — needed so Stripe Dashboard capture/cancel sync back to
+    Sylius and so the cart-page wallet flow can complete):
     ```shell
     stripe listen \
        --events checkout.session.completed,checkout.session.async_payment_failed,checkout.session.async_payment_succeeded,checkout.session.expired,payment_intent.succeeded,payment_intent.canceled,payment_intent.processing \
