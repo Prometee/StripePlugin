@@ -3,8 +3,12 @@
 ### New plugin assets must be imported in your app
 
 The plugin now ships its own asset entrypoints under `assets/admin/` and `assets/shop/`. The admin entrypoint adds 
-styling required by the redesigned payment method gateway configuration form — without it, fields in the admin form 
-render misaligned.
+styling required by the redesigned payment method gateway configuration form — without it, the fields in the gateway 
+configuration form (API keys, payment method options, and the related help/info boxes) have slightly off spacing and 
+alignment. The form stays fully usable and every field works as expected; it just looks a little less polished.
+
+For now this is purely cosmetic: the plugin remains fully functional without these assets imported, so importing them is 
+recommended but not mandatory, though it will become required in future releases.
 
 Import them from your application's Encore entrypoints:
 
