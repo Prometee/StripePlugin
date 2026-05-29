@@ -1,5 +1,40 @@
 # UPGRADE FROM 1.0.x to 1.1
 
+## Assets
+
+### Make sure the plugin asset entrypoints are imported
+
+Since v1.0.9 the plugin ships its own asset entrypoints under `assets/admin/` and `assets/shop/`. The admin entrypoint 
+adds styling required by the redesigned payment method gateway configuration form. If you have not added these imports yet, 
+do it now.
+
+Import them from your application's Encore entrypoints:
+
+```js
+// assets/admin/entrypoint.js
+
+// ...
+import '../../vendor/flux-se/sylius-stripe-plugin/assets/admin/entrypoint';
+```
+```js
+// assets/shop/entrypoint.js
+
+// ...
+import '../../vendor/flux-se/sylius-stripe-plugin/assets/shop/entrypoint';
+```
+
+Then (re)build assets:
+
+```shell
+bin/console assets:install public
+
+yarn install
+yarn encore dev   # or: yarn encore prod
+```
+
+Fresh installs using the Symfony Flex contrib recipe get these imports appended automatically — this step is only 
+required for projects upgrading in place. See [docs/INSTALLATION.md](docs/INSTALLATION.md) for the full manual setup.
+
 ## Gateway configuration
 
 ### `payment_method_types` is deprecated
