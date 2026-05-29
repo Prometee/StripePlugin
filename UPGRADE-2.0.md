@@ -79,6 +79,42 @@ If you override this parameter, rebuild your list around `invoice.payments`. The
 `payment_method` was added (alongside the existing `latest_charge`). If you override this parameter, add
 `payment_method` back — it is required for subscription-mode PaymentIntent enrichment to work end-to-end.
 
+## Assets
+
+### Make sure the plugin asset entrypoints are imported
+
+The plugin ships its asset entrypoints under `assets/admin/` and `assets/shop/`. In 2.0 the **shop** entrypoint now 
+also bundles the Express Checkout client code (`assets/shop/js/express-checkout/`), so importing it is no longer 
+cosmetic: without the shop entrypoint imported and rebuilt, the Express Checkout button never renders on the cart page 
+even when the feature is enabled and the routes are imported. If you have not added these imports yet, do it now.
+
+Import them from your application's Encore entrypoints:
+
+```js
+// assets/admin/entrypoint.js
+
+// ...
+import '../../vendor/flux-se/sylius-stripe-plugin/assets/admin/entrypoint';
+```
+```js
+// assets/shop/entrypoint.js
+
+// ...
+import '../../vendor/flux-se/sylius-stripe-plugin/assets/shop/entrypoint';
+```
+
+Then (re)build assets:
+
+```shell
+bin/console assets:install public
+
+yarn install
+yarn encore dev   # or: yarn encore prod
+```
+
+Fresh installs using the Symfony Flex contrib recipe get these imports appended automatically — this step is only
+required for projects upgrading in place. See [docs/INSTALLATION.md](docs/INSTALLATION.md) for the full manual setup.
+
 ## Express Checkout (cart page)
 
 2.0 introduces Express Checkout (ECE) on the cart page — a single button rendering Apple Pay, Google Pay, Link
