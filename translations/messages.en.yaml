@@ -27,6 +27,21 @@ flux_se_sylius_stripe_plugin:
                     webhook_secret_key: Create a new webhook endpoint
     stripe_appearance:
         title: Payment form appearance
+        commonly_used_variables: Commonly used variables
+        variables_table:
+            variable: Variable
+            description: Description
+            font_family: The font family used throughout the UI.
+            font_size_base: 'The font size set on the root of the UI. Other font sizes (fontSizeXs, fontSizeSm, etc.) are scaled from this value using rem units. Use at least 16px for input fields on mobile.'
+            spacing_unit: The base spacing unit that all other spacing is derived from. Increase or decrease this value to make your layout more or less spacious.
+            border_radius: The border radius used for tabs, inputs, and other components.
+            color_primary: A primary color used throughout the UI. Set this to your primary brand color.
+            color_background: The color used for the background of inputs, tabs, and other components.
+            color_text: The default text color used.
+            color_danger: A color used to indicate errors or destructive actions.
+        info:
+            core_variables: 'These are the core variables available by default. For additional customization, see "Customize the look and feel of Elements to match the design of your site" in the documentation.'
+            open_stripe_docs: Open Stripe Docs
         theme: Theme
         inputs: Input style
         labels: Label position
