@@ -8,6 +8,9 @@ flux_se_sylius_stripe_plugin:
         publishable_key:
             not_blank: Please enter stripe publishable key.
             invalid_format: 'The Stripe publishable key must start with pk_test_ or pk_live_.'
+    stripe_appearance:
+        color: 'Invalid color format. Use hex notation (e.g. #ff0000 or #f00).'
+        border_radius: 'Invalid value. Use CSS units (e.g. 4px, 0.5rem).'
     stripe_checkout:
         success_url:
             not_found: The request body must contain a "payload" attribute (array type), and within it, a "success_url" attribute (string value) to be able to redirect the visitor after the Stripe Checkout Session portal completion.

@@ -116,6 +116,9 @@ final class StripeGatewayConfigurationType extends AbstractType
                     ],
                 ],
             ])
+            ->add('stripe_appearance', StripeAppearanceType::class, [
+                'label' => false,
+            ])
         ;
     }
 }

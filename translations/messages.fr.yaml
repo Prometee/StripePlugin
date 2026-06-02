@@ -25,6 +25,44 @@ flux_se_sylius_stripe_plugin:
                     open_stripe_app: Ouvrir l'application Sylius Stripe
                     learn_more_restricted_keys: En savoir plus sur les clés d'API restreintes
                     webhook_secret_key: Créez un nouveau webhook endpoint
+    stripe_appearance:
+        title: Apparence du formulaire de paiement
+        commonly_used_variables: Variables couramment utilisées
+        variables_table:
+            variable: Variable
+            description: Description
+            font_family: La famille de police utilisée dans toute l'interface.
+            font_size_base: 'La taille de police définie à la racine de l''interface. Les autres tailles (fontSizeXs, fontSizeSm, etc.) sont calculées à partir de cette valeur en unités rem. Utilisez au moins 16px pour les champs de saisie sur mobile.'
+            spacing_unit: L'unité d'espacement de base dont dérive tout autre espacement. Augmentez ou diminuez cette valeur pour rendre votre mise en page plus ou moins aérée.
+            border_radius: Le rayon de bordure utilisé pour les onglets, les champs et les autres composants.
+            color_primary: Une couleur principale utilisée dans toute l'interface. Définissez-la comme couleur principale de votre marque.
+            color_background: La couleur utilisée pour l'arrière-plan des champs, onglets et autres composants.
+            color_text: La couleur de texte par défaut utilisée.
+            color_danger: Une couleur utilisée pour indiquer les erreurs ou les actions destructives.
+        info:
+            core_variables: 'Ce sont les variables principales disponibles par défaut. Pour une personnalisation supplémentaire, consultez « Personnaliser l''apparence des éléments pour correspondre au design de votre site » dans la documentation.'
+            open_stripe_docs: Ouvrir la documentation Stripe
+        theme: Thème
+        inputs: Style des champs
+        labels: Position des libellés
+        color_primary: Couleur principale (hex)
+        color_background: Couleur de fond (hex)
+        color_text: Couleur du texte (hex)
+        color_danger: Couleur d'erreur (hex)
+        font_family: Police de caractères
+        border_radius: Rayon des coins
+        spacing_unit: Unité d'espacement
+        theme_choices:
+            stripe: Stripe (défaut)
+            night: Nuit
+            flat: Plat
+        inputs_choices:
+            spaced: Espacé (défaut)
+            condensed: Condensé
+        labels_choices:
+            auto: Auto (défaut)
+            above: Au-dessus
+            floating: Flottant
     order_pay:
         web_elements:
             pay: Payer

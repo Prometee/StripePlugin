@@ -8,6 +8,9 @@ flux_se_sylius_stripe_plugin:
         publishable_key:
             not_blank: Veuillez entrer votre clé publique Stripe.
             invalid_format: 'La clé publique Stripe doit commencer par pk_test_ ou pk_live_.'
+    stripe_appearance:
+        color: 'Format de couleur invalide. Utilisez la notation hexadécimale (ex. #ff0000 ou #f00).'
+        border_radius: 'Valeur invalide. Utilisez des unités CSS (ex. 4px, 0.5rem).'
     stripe_checkout:
         success_url:
             not_found: Le corps de la requête doit contenir un attribut "payload" (type array), et à l'intérieur de celui-ci, un attribut "success_url" (type string) afin de pouvoir rediriger le visiteur après avoir terminé une Stripe Checkout Session.
