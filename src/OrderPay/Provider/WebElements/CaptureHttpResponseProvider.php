@@ -41,6 +41,7 @@ final readonly class CaptureHttpResponseProvider implements HttpResponseProvider
             throw new \LogicException('The publishable key must be defined!');
         }
 
+        /** @var array<string, mixed> $appearanceConfig */
         $appearanceConfig = $paymentRequest->getMethod()->getGatewayConfig()?->getConfig()['stripe_appearance'] ?? [];
         $appearance = $this->appearanceBuilder->build($appearanceConfig);
 

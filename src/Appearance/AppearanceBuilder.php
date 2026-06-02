@@ -10,7 +10,10 @@ final class AppearanceBuilder
 
     private const VARIABLE_KEYS = ['colorPrimary', 'colorBackground', 'colorText', 'colorDanger', 'fontFamily', 'borderRadius', 'spacingUnit'];
 
-    /** @param array<string, mixed> $config */
+    /**
+     * @param array<string, mixed> $config
+     * @return array<string, mixed>
+     */
     public function build(array $config): array
     {
         $appearance = [];
