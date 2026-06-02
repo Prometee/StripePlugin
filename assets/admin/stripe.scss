@@ -1,4 +1,5 @@
 $md-breakpoint: 992px; // Sylius admin col-md-* breakpoint
+$stripe-variables-border-color: #E1E8F3;
 
 .stripe-variables-toggle {
     cursor: pointer;
@@ -9,6 +10,53 @@ $md-breakpoint: 992px; // Sylius admin col-md-* breakpoint
 
     &:not(.collapsed) .icon {
         transform: rotate(90deg);
+    }
+}
+
+.stripe-docs-link {
+    color: #556CD6;
+    text-decoration: none;
+}
+
+.stripe-variables-list {
+    box-shadow: 0 0 8.8px 0 rgba(0, 0, 0, 0.05);
+
+    table {
+        --bs-table-border-color: #{$stripe-variables-border-color};
+        --bs-table-striped-bg: #F9FAFB;
+        --bs-table-striped-color: inherit;
+
+        thead th {
+            color: #222529;
+            background-color: transparent;
+        }
+
+        th,
+        td {
+            height: 50px;
+            vertical-align: middle;
+        }
+
+        th:first-child,
+        td:first-child {
+            width: 150px;
+            border-right: 1px solid $stripe-variables-border-color;
+        }
+
+        tbody td:last-child {
+            font-size: 0.75rem;
+            color: #1E2E3E;
+        }
+
+        tbody tr:last-child td {
+            border-bottom: 0;
+        }
+
+        code {
+            font-size: 0.75rem;
+            background-color: #F3F3F3;
+            padding: 2px 8px;
+        }
     }
 }
 

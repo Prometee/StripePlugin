@@ -374,4 +374,16 @@ definition (`config/services/state_machine.yaml`).
 definition that does **not** `parent:` the bundled abstract. Add `@flux_se.sylius_stripe.state_machine.stripe_state_applied_checker`
 (or any other `StripeStateAppliedCheckerInterface` implementation) as the sixth constructor argument.
 
+## `CaptureHttpResponseProvider` (Web Elements) constructor signature changed
+
+`FluxSE\SyliusStripePlugin\OrderPay\Provider\WebElements\CaptureHttpResponseProvider` gained a new constructor
+argument `AppearanceBuilder $appearanceBuilder`, appended after the existing `Environment $twig` argument.
+
+The new service is wired automatically through the bundled service definition
+(`config/services/integrations/sylius_shop/http_reponse_providers.yaml`).
+
+**You must migrate if** you instantiate `CaptureHttpResponseProvider` directly in PHP or via a manual service
+definition that does **not** use the bundled one. Add
+`@FluxSE\SyliusStripePlugin\Appearance\AppearanceBuilder` as the third constructor argument.
+
 [link-sylius-stripe-app]: https://marketplace.stripe.com/apps/install/link/com.sylius.stripe
