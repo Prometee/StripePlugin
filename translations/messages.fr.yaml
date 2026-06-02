@@ -31,8 +31,8 @@ flux_se_sylius_stripe_plugin:
         variables_table:
             variable: Variable
             description: Description
-            font_family: La famille de police utilisée dans toute l'interface.
-            font_size_base: 'La taille de police définie à la racine de l''interface. Les autres tailles (fontSizeXs, fontSizeSm, etc.) sont calculées à partir de cette valeur en unités rem. Utilisez au moins 16px pour les champs de saisie sur mobile.'
+            font_family: 'La famille de police utilisée dans toute l''interface. Elements supporte les polices personnalisées en passant l''option <span class="text-primary">fonts</span> à <a href="https://docs.stripe.com/js/custom_checkout/init#custom_checkout_init-options-elementsOptions-fonts" target="_blank" rel="noopener noreferrer" class="fw-bold stripe-docs-link">initCheckoutElementsSdk</a> ou <a href="https://docs.stripe.com/js/react_stripe_js/checkout/checkout_provider#react_checkout_provider-options-elementsOptions-fonts" target="_blank" rel="noopener noreferrer" class="fw-bold stripe-docs-link">CheckoutElementsProvider</a>.'
+            font_size_base: 'La taille de police définie à la racine de l''interface. Les autres tailles (<span class="text-primary">fontSizeXs</span>, <span class="text-primary">fontSizeSm</span>, etc.) sont calculées à partir de cette valeur en unités <span class="text-primary">rem</span>. Utilisez au moins 16px pour les champs de saisie sur mobile.'
             spacing_unit: L'unité d'espacement de base dont dérive tout autre espacement. Augmentez ou diminuez cette valeur pour rendre votre mise en page plus ou moins aérée.
             border_radius: Le rayon de bordure utilisé pour les onglets, les champs et les autres composants.
             color_primary: Une couleur principale utilisée dans toute l'interface. Définissez-la comme couleur principale de votre marque.

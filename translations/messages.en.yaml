@@ -31,8 +31,8 @@ flux_se_sylius_stripe_plugin:
         variables_table:
             variable: Variable
             description: Description
-            font_family: The font family used throughout the UI.
-            font_size_base: 'The font size set on the root of the UI. Other font sizes (fontSizeXs, fontSizeSm, etc.) are scaled from this value using rem units. Use at least 16px for input fields on mobile.'
+            font_family: 'The font family used throughout the UI. Elements support custom fonts by passing the <span class="text-primary">fonts</span> option to <a href="https://docs.stripe.com/js/custom_checkout/init#custom_checkout_init-options-elementsOptions-fonts" target="_blank" rel="noopener noreferrer" class="fw-bold stripe-docs-link">initCheckoutElementsSdk</a> or <a href="https://docs.stripe.com/js/react_stripe_js/checkout/checkout_provider#react_checkout_provider-options-elementsOptions-fonts" target="_blank" rel="noopener noreferrer" class="fw-bold stripe-docs-link">CheckoutElementsProvider</a>.'
+            font_size_base: 'The font size that''s set on the root of the UI. By default, other font size variables such as <span class="text-primary">fontSizeXs</span> or <span class="text-primary">fontSizeSm</span> are scaled from this value using <span class="text-primary">rem</span> units. Make sure that you choose a font size of at least 16px for input fields on mobile.'
             spacing_unit: The base spacing unit that all other spacing is derived from. Increase or decrease this value to make your layout more or less spacious.
             border_radius: The border radius used for tabs, inputs, and other components.
             color_primary: A primary color used throughout the UI. Set this to your primary brand color.
