@@ -12,7 +12,7 @@ use Symfony\Component\Validator\Constraints\Regex;
 
 final class StripeAppearanceType extends AbstractType
 {
-    public const COLOR_PATTERN = '/^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/';
+    public const COLOR_PATTERN = '/^#([0-9a-fA-F]{3}|[0-9a-fA-F]{4}|[0-9a-fA-F]{6})$/';
 
     public const BORDER_RADIUS_PATTERN = '/^\d+(px|rem|em|%)$/';
 
