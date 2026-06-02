@@ -16,10 +16,6 @@ $stripe-variables-border-color: #E1E8F3;
 .stripe-docs-link {
     color: #556CD6;
     text-decoration: none;
-
-    &:hover {
-        color: #3a4fa8;
-    }
 }
 
 .stripe-variables-list {
@@ -47,20 +43,7 @@ $stripe-variables-border-color: #E1E8F3;
             border-right: 1px solid $stripe-variables-border-color;
         }
 
-        thead th:first-child {
-            padding-left: 29px;
-        }
-
-        thead th:last-child {
-            padding-left: 26px;
-        }
-
-        tbody td:first-child {
-            padding-left: 13px;
-        }
-
         tbody td:last-child {
-            padding-left: 29px;
             font-size: 0.75rem;
             color: #1E2E3E;
         }
