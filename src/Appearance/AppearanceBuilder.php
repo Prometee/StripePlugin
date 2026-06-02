@@ -12,6 +12,7 @@ final class AppearanceBuilder
 
     /**
      * @param array<string, mixed> $config
+     *
      * @return array<string, mixed>
      */
     public function build(array $config): array
