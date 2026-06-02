@@ -380,10 +380,10 @@ definition that does **not** `parent:` the bundled abstract. Add `@flux_se.syliu
 argument `AppearanceBuilder $appearanceBuilder`, appended after the existing `Environment $twig` argument.
 
 The new service is wired automatically through the bundled service definition
-(`config/services/order_pay/providers/web_elements.yaml`).
+(`config/services/integrations/sylius_shop/http_reponse_providers.yaml`).
 
 **You must migrate if** you instantiate `CaptureHttpResponseProvider` directly in PHP or via a manual service
 definition that does **not** use the bundled one. Add
-`@flux_se.sylius_stripe.appearance.appearance_builder` as the third constructor argument.
+`@FluxSE\SyliusStripePlugin\Appearance\AppearanceBuilder` as the third constructor argument.
 
 [link-sylius-stripe-app]: https://marketplace.stripe.com/apps/install/link/com.sylius.stripe
