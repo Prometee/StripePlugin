@@ -9,7 +9,7 @@ use Sylius\Bundle\ResourceBundle\DependencyInjection\Extension\AbstractResourceE
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Extension\PrependExtensionInterface;
-use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
+use Symfony\Component\DependencyInjection\Loader\PhpFileLoader;
 
 final class FluxSESyliusStripeExtension extends AbstractResourceExtension implements PrependExtensionInterface
 {
@@ -32,15 +32,15 @@ final class FluxSESyliusStripeExtension extends AbstractResourceExtension implem
             $config['line_item_image']['localhost_pattern'],
         );
 
-        $loader = new YamlFileLoader($container, new FileLocator(__DIR__ . '/../../config'));
+        $loader = new PhpFileLoader($container, new FileLocator(__DIR__ . '/../../config'));
 
-        $loader->load('services.yaml');
+        $loader->load('services.php');
 
         if ($container->hasParameter('kernel.bundles')) {
             /** @var string[] $bundles */
             $bundles = $container->getParameter('kernel.bundles');
             if (array_key_exists('SyliusShopBundle', $bundles)) {
-                $loader->load('services/integrations/sylius_shop.yaml');
+                $loader->load('services/integrations/sylius_shop.php');
             }
         }
     }
