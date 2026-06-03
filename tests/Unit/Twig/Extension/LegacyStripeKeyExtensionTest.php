@@ -14,6 +14,10 @@ use Sylius\Component\Payment\Repository\PaymentMethodRepositoryInterface;
 
 final class LegacyStripeKeyExtensionTest extends TestCase
 {
+    /**
+     * @param PaymentMethodRepositoryInterface<PaymentMethodInterface>|null $repository
+     * @param list<string> $stripeFactoryNames
+     */
     private function buildExtension(
         ?LegacyKeyDetectorInterface $detector = null,
         ?PaymentMethodRepositoryInterface $repository = null,
