@@ -215,6 +215,11 @@ Kudos to [Prometee](https://github.com/Prometee) and [all contributors](../../co
 
 This plugin is released under the [MIT License](LICENSE).
 
+## Telemetry
+
+This plugin enforces telemetry data collection when used with Sylius.
+Details are described in [TELEMETRY_POLICY.md](./TELEMETRY_POLICY.md).
+
 [ico-version]: https://img.shields.io/packagist/v/flux-se/sylius-stripe-plugin.svg?style=flat-square
 [ico-total-downloads]: https://img.shields.io/packagist/dt/flux-se/sylius-stripe-plugin.svg?style=flat-square
 [ico-license]: https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square
