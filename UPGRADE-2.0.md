@@ -386,4 +386,15 @@ The new service is wired automatically through the bundled service definition
 definition that does **not** use the bundled one. Add
 `@FluxSE\SyliusStripePlugin\Appearance\AppearanceBuilder` as the third constructor argument.
 
+## `StripeNotifyPaymentProvider` constructor signature changed
+
+`FluxSE\SyliusStripePlugin\Provider\StripeNotifyPaymentProvider` gained a new constructor argument
+`RefundEventTokenHashResolverInterface $refundEventTokenHashResolver`, appended after the existing
+`EventResolverInterface $eventResolver` argument.
+
+**You must migrate if** you instantiate `StripeNotifyPaymentProvider` directly in PHP or via a manual service
+definition that does **not** use the bundled one. Add
+`@flux_se.sylius_stripe.provider.refund_event_token_hash_resolver` (or any other
+`RefundEventTokenHashResolverInterface` implementation) as the fourth constructor argument.
+
 [link-sylius-stripe-app]: https://marketplace.stripe.com/apps/install/link/com.sylius.stripe

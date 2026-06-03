@@ -127,7 +127,7 @@ Then create a new endpoint with those events:
 
 | Gateway | `stripe_checkout` | `stripe_web_elements` |
 |-|-|-|
-| Webhook events |  - `checkout.session.completed`<br> - `checkout.session.async_payment_failed`<br> - `checkout.session.async_payment_succeeded`<br> - `checkout.session.expired`<br> - `payment_intent.succeeded` (⚠️ Required when `use authorize` is ON or Express Checkout is enabled — see note below)<br> - `payment_intent.canceled` (⚠️ Required when `use authorize` is ON or Express Checkout is enabled — see note below)<br> - `payment_intent.processing` (⚠️ Required when `use authorize` is ON or Express Checkout is enabled — see note below)<br> - `setup_intent.canceled` (⚠️ Only when using `setup` mode)<br> - `setup_intent.succeeded`  (⚠️ Only when using `setup` mode) |  - `payment_intent.canceled`<br> - `payment_intent.succeeded`<br> - `payment_intent.processing`<br> - `setup_intent.canceled` (⚠️ Only when using `setup` mode)<br> - `setup_intent.succeeded`  (⚠️ Only when using `setup` mode) |
+| Webhook events |  - `checkout.session.completed`<br> - `checkout.session.async_payment_failed`<br> - `checkout.session.async_payment_succeeded`<br> - `checkout.session.expired`<br> - `payment_intent.succeeded` (⚠️ Required when `use authorize` is ON or Express Checkout is enabled — see note below)<br> - `payment_intent.canceled` (⚠️ Required when `use authorize` is ON or Express Checkout is enabled — see note below)<br> - `payment_intent.processing` (⚠️ Required when `use authorize` is ON or Express Checkout is enabled — see note below)<br> - `charge.refunded` (⚠️ Only needed to sync refunds initiated from the Stripe Dashboard)<br> - `setup_intent.canceled` (⚠️ Only when using `setup` mode)<br> - `setup_intent.succeeded`  (⚠️ Only when using `setup` mode) |  - `payment_intent.canceled`<br> - `payment_intent.succeeded`<br> - `payment_intent.processing`<br> - `charge.refunded` (⚠️ Only needed to sync refunds initiated from the Stripe Dashboard)<br> - `setup_intent.canceled` (⚠️ Only when using `setup` mode)<br> - `setup_intent.succeeded`  (⚠️ Only when using `setup` mode) |
 
 > 💡 **`payment_intent.*` for `stripe_checkout`.** The three `payment_intent.*` events
 > are required on a `stripe_checkout` PaymentMethod endpoint whenever **at least one** of
@@ -150,6 +150,12 @@ Then create a new endpoint with those events:
 > Which wallets actually appear on the Express Checkout button (Apple Pay, Google Pay,
 > Link, PayPal, Amazon Pay) is decided by your Stripe Dashboard configuration and the
 > customer's browser — the plugin does not hard-code that list.
+
+> 💡 **`charge.refunded` for Dashboard refunds.** A refund made from the Sylius admin does
+> not need a webhook. Subscribe to `charge.refunded` (on either gateway) only if refunds may
+> be initiated directly in the Stripe Dashboard — it lets Sylius move a **fully** refunded
+> payment to `Refunded`. A **partial** refund has no native Sylius state, so the plugin leaves
+> the payment unchanged. See [Webhook events](docs/WEBHOOK-EVENTS.md) for details.
 
 The URL to fill is the route named `sylius_payment_method_notify` with the `{code}`
 param equal to the `payment method code`, here is an example :
@@ -191,10 +197,11 @@ Then start to listen for the Stripe events (minimal ones are used here), forward
        --forward-to https://localhost/payment-methods/my_shop_stripe_checkout
     ```
 
- 2. Example with `my_shop_stripe_web_elements` as payment method code:
+ 2. Example with `my_shop_stripe_web_elements` as payment method code
+    (append `charge.refunded` to also sync refunds initiated from the Stripe Dashboard):
     ```shell
     stripe listen \
-       --events payment_intent.canceled,payment_intent.succeeded,payment_intent.processing \
+       --events payment_intent.canceled,payment_intent.succeeded,payment_intent.processing,charge.refunded \
        --forward-to https://localhost/payment-methods/my_shop_stripe_web_elements
     ```
  3. Example with `my_shop_stripe_checkout` as payment method code **with `use authorize`
@@ -203,9 +210,12 @@ Then start to listen for the Stripe events (minimal ones are used here), forward
     Sylius and so the cart-page wallet flow can complete):
     ```shell
     stripe listen \
-       --events checkout.session.completed,checkout.session.async_payment_failed,checkout.session.async_payment_succeeded,checkout.session.expired,payment_intent.succeeded,payment_intent.canceled,payment_intent.processing \
+       --events checkout.session.completed,checkout.session.async_payment_failed,checkout.session.async_payment_succeeded,checkout.session.expired,payment_intent.succeeded,payment_intent.canceled,payment_intent.processing,charge.refunded \
        --forward-to https://localhost/payment-methods/my_shop_stripe_checkout
     ```
+
+> 💡 Add `,charge.refunded` to any of the `--events` lists above to also sync refunds that are
+> initiated from the Stripe Dashboard (full refund → payment `Refunded`; partial refund is a no-op).
 
 > 💡 Replace --forward-to argument value with the right one you need.
 
