@@ -23,3 +23,15 @@ sylius_twig_hooks:
                 template: '@FluxSESyliusStripePlugin/admin/payment_method/form/sections/stripe_appearance/stripe_web_elements/form.html.twig'
                 priority: 0
         'sylius_admin.payment_method.update.content.form.sections.stripe_appearance.stripe_web_elements.content': *appearance_body
+
+        'sylius_admin.payment_method.create.content.form.sections.stripe_appearance.stripe_web_elements.content.form': &form_content
+            selects:
+                template: '@FluxSESyliusStripePlugin/admin/payment_method/form/sections/stripe_appearance/stripe_web_elements/form/selects.html.twig'
+                priority: 200
+            colors:
+                template: '@FluxSESyliusStripePlugin/admin/payment_method/form/sections/stripe_appearance/stripe_web_elements/form/colors.html.twig'
+                priority: 100
+            typography:
+                template: '@FluxSESyliusStripePlugin/admin/payment_method/form/sections/stripe_appearance/stripe_web_elements/form/typography.html.twig'
+                priority: 0
+        'sylius_admin.payment_method.update.content.form.sections.stripe_appearance.stripe_web_elements.content.form': *form_content

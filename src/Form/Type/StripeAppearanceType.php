@@ -22,8 +22,8 @@ final class StripeAppearanceType extends AbstractType
             ->add('theme', ChoiceType::class, [
                 'label' => 'flux_se_sylius_stripe_plugin.stripe_appearance.theme',
                 'required' => false,
+                'placeholder' => 'flux_se_sylius_stripe_plugin.stripe_appearance.theme_choices.stripe',
                 'choices' => [
-                    'flux_se_sylius_stripe_plugin.stripe_appearance.theme_choices.stripe' => 'stripe',
                     'flux_se_sylius_stripe_plugin.stripe_appearance.theme_choices.night' => 'night',
                     'flux_se_sylius_stripe_plugin.stripe_appearance.theme_choices.flat' => 'flat',
                 ],
@@ -31,16 +31,16 @@ final class StripeAppearanceType extends AbstractType
             ->add('inputs', ChoiceType::class, [
                 'label' => 'flux_se_sylius_stripe_plugin.stripe_appearance.inputs',
                 'required' => false,
+                'placeholder' => 'flux_se_sylius_stripe_plugin.stripe_appearance.inputs_choices.spaced',
                 'choices' => [
-                    'flux_se_sylius_stripe_plugin.stripe_appearance.inputs_choices.spaced' => 'spaced',
                     'flux_se_sylius_stripe_plugin.stripe_appearance.inputs_choices.condensed' => 'condensed',
                 ],
             ])
             ->add('labels', ChoiceType::class, [
                 'label' => 'flux_se_sylius_stripe_plugin.stripe_appearance.labels',
                 'required' => false,
+                'placeholder' => 'flux_se_sylius_stripe_plugin.stripe_appearance.labels_choices.auto',
                 'choices' => [
-                    'flux_se_sylius_stripe_plugin.stripe_appearance.labels_choices.auto' => 'auto',
                     'flux_se_sylius_stripe_plugin.stripe_appearance.labels_choices.above' => 'above',
                     'flux_se_sylius_stripe_plugin.stripe_appearance.labels_choices.floating' => 'floating',
                 ],

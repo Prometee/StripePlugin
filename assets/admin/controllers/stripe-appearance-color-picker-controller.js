@@ -4,8 +4,12 @@ export default class extends Controller {
     static targets = ['picker', 'text'];
 
     connect() {
-        if (this.textTarget.value) {
-            this.pickerTarget.value = this.#expandHex(this.textTarget.value);
+        this.#syncPicker();
+    }
+
+    pickerTargetConnected(element) {
+        if (this.hasTextTarget && this.textTarget.value) {
+            element.value = this.#expandHex(this.textTarget.value);
         }
     }
 
@@ -22,6 +26,12 @@ export default class extends Controller {
     clear() {
         this.textTarget.value = '';
         this.pickerTarget.value = '#000000';
+    }
+
+    #syncPicker() {
+        if (this.textTarget.value) {
+            this.pickerTarget.value = this.#expandHex(this.textTarget.value);
+        }
     }
 
     #expandHex(hex) {

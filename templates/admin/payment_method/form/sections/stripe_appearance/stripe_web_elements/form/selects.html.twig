@@ -1,0 +1,7 @@
+{% set appearance_form = hookable_metadata.context.form.gatewayConfig.config.stripe_appearance %}
+
+<div class="col-12 col-lg-4">
+    {{ form_row(appearance_form.theme) }}
+    {{ form_row(appearance_form.inputs) }}
+    {{ form_row(appearance_form.labels) }}
+</div>
