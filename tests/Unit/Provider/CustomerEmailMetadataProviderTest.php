@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\FluxSE\SyliusStripePlugin\Unit\Provider;
 
 use FluxSE\SyliusStripePlugin\Provider\CustomerEmailMetadataProvider;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use PHPUnit\Framework\TestCase;
 use Stripe\PaymentIntent;
 use Sylius\Component\Core\Model\CustomerInterface;
@@ -12,6 +13,7 @@ use Sylius\Component\Core\Model\OrderInterface;
 use Sylius\Component\Core\Model\PaymentInterface;
 use Sylius\Component\Payment\Model\PaymentRequestInterface;
 
+#[AllowMockObjectsWithoutExpectations]
 final class CustomerEmailMetadataProviderTest extends TestCase
 {
     /** @var CustomerEmailMetadataProvider<PaymentIntent> */

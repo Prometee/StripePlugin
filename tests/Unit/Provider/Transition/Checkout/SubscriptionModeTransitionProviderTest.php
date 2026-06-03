@@ -6,6 +6,7 @@ namespace Tests\FluxSE\SyliusStripePlugin\Unit\Provider\Transition\Checkout;
 
 use FluxSE\SyliusStripePlugin\Provider\Transition\Checkout\SubscriptionModeTransitionProvider;
 use FluxSE\SyliusStripePlugin\Provider\Transition\WebElements\PaymentIntentTransitionProvider;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Stripe\Charge;
 use Stripe\Checkout\Session;
@@ -21,9 +22,7 @@ final class SubscriptionModeTransitionProviderTest extends TestCase
         $this->provider = new SubscriptionModeTransitionProvider(new PaymentIntentTransitionProvider());
     }
 
-    /**
-     * @dataProvider authorizeDataProvider
-     */
+    #[DataProvider('authorizeDataProvider')]
     public function test_is_authorize(string $paymentIntentStatus, bool $expectedResult): void
     {
         $session = $this->createSessionWithPaymentIntent($paymentIntentStatus);
@@ -44,9 +43,7 @@ final class SubscriptionModeTransitionProviderTest extends TestCase
         yield 'payment intent canceled' => [PaymentIntent::STATUS_CANCELED, false];
     }
 
-    /**
-     * @dataProvider completeDataProvider
-     */
+    #[DataProvider('completeDataProvider')]
     public function test_is_complete(string $paymentIntentStatus, string $sessionPaymentStatus, bool $chargeRefunded, bool $expectedResult): void
     {
         $session = $this->createSessionWithPaymentIntent($paymentIntentStatus, $sessionPaymentStatus, null, $chargeRefunded);
@@ -77,9 +74,7 @@ final class SubscriptionModeTransitionProviderTest extends TestCase
         self::assertFalse($result);
     }
 
-    /**
-     * @dataProvider processDataProvider
-     */
+    #[DataProvider('processDataProvider')]
     public function test_is_process(string $paymentIntentStatus, string $sessionPaymentStatus, bool $expectedResult): void
     {
         $session = $this->createSessionWithPaymentIntent($paymentIntentStatus, $sessionPaymentStatus);
@@ -100,10 +95,9 @@ final class SubscriptionModeTransitionProviderTest extends TestCase
     }
 
     /**
-     * @dataProvider cancelDataProvider
-     *
      * @param array<string, mixed>|null $lastPaymentError
      */
+    #[DataProvider('cancelDataProvider')]
     public function test_is_cancel(string $paymentIntentStatus, ?array $lastPaymentError, bool $expectedResult): void
     {
         $session = $this->createSessionWithPaymentIntent($paymentIntentStatus, Session::PAYMENT_STATUS_UNPAID, $lastPaymentError);
@@ -124,9 +118,7 @@ final class SubscriptionModeTransitionProviderTest extends TestCase
         yield 'succeeded status' => [PaymentIntent::STATUS_SUCCEEDED, null, false];
     }
 
-    /**
-     * @dataProvider refundDataProvider
-     */
+    #[DataProvider('refundDataProvider')]
     public function test_is_refund(string $paymentIntentStatus, string $sessionPaymentStatus, bool $chargeRefunded, bool $expectedResult): void
     {
         $session = $this->createSessionWithPaymentIntent(

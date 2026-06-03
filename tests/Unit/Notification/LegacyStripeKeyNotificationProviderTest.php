@@ -7,12 +7,14 @@ namespace Tests\FluxSE\SyliusStripePlugin\Unit\Notification;
 use FluxSE\SyliusStripePlugin\Notification\LegacyStripeKeyNotificationProvider;
 use FluxSE\SyliusStripePlugin\Stripe\SecretKey\LegacyKeyDetectorInterface;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use PHPUnit\Framework\TestCase;
 use Sylius\Bundle\PaymentBundle\Provider\GatewayFactoryNameProviderInterface;
 use Sylius\Component\Payment\Model\GatewayConfigInterface;
 use Sylius\Component\Payment\Model\PaymentMethodInterface;
 use Sylius\Component\Payment\Repository\PaymentMethodRepositoryInterface;
 
+#[AllowMockObjectsWithoutExpectations]
 final class LegacyStripeKeyNotificationProviderTest extends TestCase
 {
     private const STRIPE_FACTORY_NAMES = ['stripe_checkout', 'stripe_web_elements'];

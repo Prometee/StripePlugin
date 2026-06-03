@@ -19,6 +19,7 @@ use FluxSE\SyliusStripePlugin\Normalizer\ExpressCheckoutAddressNormalizerInterfa
 use FluxSE\SyliusStripePlugin\Provider\AfterUrlProviderInterface;
 use FluxSE\SyliusStripePlugin\Resolver\ExpressCheckoutPaymentMethodResolverInterface;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use PHPUnit\Framework\TestCase;
 use Sylius\Abstraction\StateMachine\Exception\StateMachineExecutionException;
 use Sylius\Abstraction\StateMachine\StateMachineInterface;
@@ -40,6 +41,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
+#[AllowMockObjectsWithoutExpectations]
 final class OrderCompleterTest extends TestCase
 {
     /** @var CartContextInterface&MockObject */

@@ -5,12 +5,14 @@ declare(strict_types=1);
 namespace Tests\FluxSE\SyliusStripePlugin\Unit\StateMachine;
 
 use FluxSE\SyliusStripePlugin\StateMachine\StripeStateAppliedChecker;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use PHPUnit\Framework\TestCase;
 use Stripe\Checkout\Session;
 use Stripe\PaymentIntent;
 use Sylius\Component\Core\Model\PaymentInterface;
 use Sylius\Component\Payment\Model\PaymentRequestInterface;
 
+#[AllowMockObjectsWithoutExpectations]
 final class StripeStateAppliedCheckerTest extends TestCase
 {
     private StripeStateAppliedChecker $checker;

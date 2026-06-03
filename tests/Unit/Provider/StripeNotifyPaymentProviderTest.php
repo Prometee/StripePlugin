@@ -8,6 +8,7 @@ use FluxSE\SyliusStripePlugin\Provider\RefundEventTokenHashResolverInterface;
 use FluxSE\SyliusStripePlugin\Provider\StripeNotifyPaymentProvider;
 use FluxSE\SyliusStripePlugin\Stripe\Resolver\EventResolverInterface;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use PHPUnit\Framework\TestCase;
 use Stripe\Charge;
 use Stripe\Event;
@@ -18,6 +19,7 @@ use Sylius\Component\Payment\Model\PaymentRequestInterface;
 use Sylius\Component\Payment\Repository\PaymentRequestRepositoryInterface;
 use Symfony\Component\HttpFoundation\Request;
 
+#[AllowMockObjectsWithoutExpectations]
 final class StripeNotifyPaymentProviderTest extends TestCase
 {
     private EventResolverInterface&MockObject $eventResolver;

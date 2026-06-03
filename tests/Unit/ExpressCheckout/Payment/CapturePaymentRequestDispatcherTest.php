@@ -7,6 +7,7 @@ namespace Tests\FluxSE\SyliusStripePlugin\Unit\ExpressCheckout\Payment;
 use FluxSE\SyliusStripePlugin\Command\WebElements\CapturePaymentRequest;
 use FluxSE\SyliusStripePlugin\ExpressCheckout\Payment\CapturePaymentRequestDispatcher;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use PHPUnit\Framework\TestCase;
 use Sylius\Component\Core\Model\PaymentInterface;
 use Sylius\Component\Core\Model\PaymentMethodInterface;
@@ -16,6 +17,7 @@ use Sylius\Component\Payment\Repository\PaymentRequestRepositoryInterface;
 use Symfony\Component\Messenger\Envelope;
 use Symfony\Component\Messenger\MessageBusInterface;
 
+#[AllowMockObjectsWithoutExpectations]
 final class CapturePaymentRequestDispatcherTest extends TestCase
 {
     /** @var PaymentRequestFactoryInterface<PaymentRequestInterface>&MockObject */

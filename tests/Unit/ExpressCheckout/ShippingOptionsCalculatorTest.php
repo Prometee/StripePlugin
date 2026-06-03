@@ -14,6 +14,7 @@ use FluxSE\SyliusStripePlugin\ExpressCheckout\Shipping\ShippingRateAssemblerInte
 use FluxSE\SyliusStripePlugin\ExpressCheckout\ShippingOptionsCalculator;
 use FluxSE\SyliusStripePlugin\Normalizer\ExpressCheckoutAddressNormalizerInterface;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use PHPUnit\Framework\TestCase;
 use Sylius\Component\Core\Model\AddressInterface;
 use Sylius\Component\Core\Model\OrderInterface;
@@ -26,6 +27,7 @@ use Sylius\Component\Shipping\Repository\ShippingMethodRepositoryInterface;
 use Sylius\Component\Shipping\Resolver\ShippingMethodsResolverInterface;
 use Symfony\Component\HttpFoundation\Request;
 
+#[AllowMockObjectsWithoutExpectations]
 final class ShippingOptionsCalculatorTest extends TestCase
 {
     /** @var CartContextInterface&MockObject */

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\FluxSE\SyliusStripePlugin\Unit\Form\Type;
 
 use FluxSE\SyliusStripePlugin\Form\Type\StripeAppearanceType;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Validator\Constraints\Regex;
 use Symfony\Component\Validator\Validation;
@@ -19,7 +20,7 @@ final class StripeAppearanceTypeTest extends TestCase
         $this->validator = Validation::createValidator();
     }
 
-    /** @dataProvider acceptedColorProvider */
+    #[DataProvider('acceptedColorProvider')]
     public function test_color_field_accepts_valid_hex(string $color): void
     {
         $violations = $this->validator->validate($color, new Regex(['pattern' => StripeAppearanceType::COLOR_PATTERN]));
@@ -37,7 +38,7 @@ final class StripeAppearanceTypeTest extends TestCase
         yield '4 digit hex' => ['#f0f0'];
     }
 
-    /** @dataProvider rejectedColorProvider */
+    #[DataProvider('rejectedColorProvider')]
     public function test_color_field_rejects_invalid_hex(string $color): void
     {
         $violations = $this->validator->validate($color, new Regex(['pattern' => StripeAppearanceType::COLOR_PATTERN]));
@@ -56,7 +57,7 @@ final class StripeAppearanceTypeTest extends TestCase
         yield 'invalid chars' => ['#gg0000'];
     }
 
-    /** @dataProvider acceptedBorderRadiusProvider */
+    #[DataProvider('acceptedBorderRadiusProvider')]
     public function test_border_radius_field_accepts_valid_values(string $value): void
     {
         $violations = $this->validator->validate($value, new Regex(['pattern' => StripeAppearanceType::BORDER_RADIUS_PATTERN]));
@@ -75,7 +76,7 @@ final class StripeAppearanceTypeTest extends TestCase
         yield 'multi digit px' => ['16px'];
     }
 
-    /** @dataProvider rejectedBorderRadiusProvider */
+    #[DataProvider('rejectedBorderRadiusProvider')]
     public function test_border_radius_field_rejects_invalid_values(string $value): void
     {
         $violations = $this->validator->validate($value, new Regex(['pattern' => StripeAppearanceType::BORDER_RADIUS_PATTERN]));

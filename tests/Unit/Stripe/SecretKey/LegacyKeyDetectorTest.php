@@ -5,11 +5,12 @@ declare(strict_types=1);
 namespace Tests\FluxSE\SyliusStripePlugin\Unit\Stripe\SecretKey;
 
 use FluxSE\SyliusStripePlugin\Stripe\SecretKey\LegacyKeyDetector;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 final class LegacyKeyDetectorTest extends TestCase
 {
-    /** @dataProvider legacyKeyProvider */
+    #[DataProvider('legacyKeyProvider')]
     public function test_it_recognises_legacy_secret_keys(string $secretKey): void
     {
         $detector = new LegacyKeyDetector();
@@ -24,7 +25,7 @@ final class LegacyKeyDetectorTest extends TestCase
         yield 'secret key in live mode' => ['sk_live_abc123'];
     }
 
-    /** @dataProvider nonLegacyKeyProvider */
+    #[DataProvider('nonLegacyKeyProvider')]
     public function test_it_does_not_flag_non_legacy_values(?string $secretKey): void
     {
         $detector = new LegacyKeyDetector();

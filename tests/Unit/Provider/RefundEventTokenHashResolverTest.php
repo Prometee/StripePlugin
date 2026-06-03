@@ -7,6 +7,7 @@ namespace Tests\FluxSE\SyliusStripePlugin\Unit\Provider;
 use FluxSE\SyliusStripePlugin\Provider\RefundEventTokenHashResolver;
 use FluxSE\SyliusStripePlugin\Stripe\Factory\ClientFactoryInterface;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use PHPUnit\Framework\TestCase;
 use Stripe\Charge;
 use Stripe\PaymentIntent;
@@ -14,6 +15,7 @@ use Stripe\Service\PaymentIntentService;
 use Stripe\StripeClient;
 use Sylius\Component\Payment\Model\PaymentMethodInterface;
 
+#[AllowMockObjectsWithoutExpectations]
 final class RefundEventTokenHashResolverTest extends TestCase
 {
     private ClientFactoryInterface&MockObject $clientFactory;

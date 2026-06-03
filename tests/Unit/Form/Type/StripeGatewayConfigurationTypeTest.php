@@ -6,6 +6,8 @@ namespace Tests\FluxSE\SyliusStripePlugin\Unit\Form\Type;
 
 use FluxSE\SyliusStripePlugin\Form\Type\StripeCheckoutGatewayConfigurationType;
 use FluxSE\SyliusStripePlugin\Form\Type\StripeGatewayConfigurationType;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -14,6 +16,7 @@ use Symfony\Component\Validator\Constraints\Regex;
 use Symfony\Component\Validator\Validation;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
+#[AllowMockObjectsWithoutExpectations]
 final class StripeGatewayConfigurationTypeTest extends TestCase
 {
     private ValidatorInterface $validator;
@@ -84,7 +87,7 @@ final class StripeGatewayConfigurationTypeTest extends TestCase
         return $registered;
     }
 
-    /** @dataProvider acceptedSecretKeyProvider */
+    #[DataProvider('acceptedSecretKeyProvider')]
     public function test_secret_key_field_accepts_restricted_keys(string $key): void
     {
         $violations = $this->validator->validate($key, $this->secretKeyConstraints());
@@ -99,7 +102,7 @@ final class StripeGatewayConfigurationTypeTest extends TestCase
         yield 'restricted key in live mode' => ['rk_live_abc123'];
     }
 
-    /** @dataProvider rejectedSecretKeyProvider */
+    #[DataProvider('rejectedSecretKeyProvider')]
     public function test_secret_key_field_rejects_invalid_keys(string $key): void
     {
         $violations = $this->validator->validate($key, $this->secretKeyConstraints());
@@ -120,7 +123,7 @@ final class StripeGatewayConfigurationTypeTest extends TestCase
         yield 'restricted key without environment segment' => ['rk_abc123'];
     }
 
-    /** @dataProvider acceptedPublishableKeyProvider */
+    #[DataProvider('acceptedPublishableKeyProvider')]
     public function test_publishable_key_field_accepts_publishable_keys(string $key): void
     {
         $violations = $this->validator->validate($key, $this->publishableKeyConstraints());
@@ -135,7 +138,7 @@ final class StripeGatewayConfigurationTypeTest extends TestCase
         yield 'publishable key in live mode' => ['pk_live_abc123'];
     }
 
-    /** @dataProvider rejectedPublishableKeyProvider */
+    #[DataProvider('rejectedPublishableKeyProvider')]
     public function test_publishable_key_field_rejects_invalid_keys(string $key): void
     {
         $violations = $this->validator->validate($key, $this->publishableKeyConstraints());

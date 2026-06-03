@@ -8,12 +8,14 @@ use FluxSE\SyliusStripePlugin\Manager\Checkout\RetrieveManagerInterface;
 use FluxSE\SyliusStripePlugin\Manager\Checkout\SubscriptionAwareRetrieveManager;
 use FluxSE\SyliusStripePlugin\Manager\WebElements\RetrieveManagerInterface as PaymentIntentRetrieveManagerInterface;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use PHPUnit\Framework\TestCase;
 use Stripe\Checkout\Session;
 use Stripe\Invoice;
 use Stripe\PaymentIntent;
 use Sylius\Component\Payment\Model\PaymentRequestInterface;
 
+#[AllowMockObjectsWithoutExpectations]
 final class SubscriptionAwareRetrieveManagerTest extends TestCase
 {
     private RetrieveManagerInterface&MockObject $inner;
