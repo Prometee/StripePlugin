@@ -20,12 +20,13 @@ flux_se_sylius_stripe_plugin:
                     secret_key_legacy_warning: This gateway uses a standard Stripe secret key. Support for sk_… keys will be removed in plugin 2.0 - switch to a Restricted API Key from the Sylius Stripe App when convenient.
                     use_authorize: When a payment is authorized, the bank guarantees the amount and holds it on the customer’s card for up to seven days.
                     webhook_secret_key: Create a new webhook endpoint to generate a new webhook secret key on the Stripe dashboard and listen for several events.
-                    payment_method_type: It's normally not necessary to define payment methods here, you can manage them using the Stripe dashboard.
+                    payment_method_types_deprecated: This setting is deprecated and will be removed in Stripe Plugin 2.0. Leave this list empty and manage active payment methods directly in your Stripe Dashboard, so Stripe can dynamically present the best subset to each customer.
                 action:
                     open_stripe_app: Open Sylius Stripe App
                     learn_more_restricted_keys: Learn more about restricted API keys
                     secret_key: Open Stripe Dashboard API keys
                     webhook_secret_key: Create a new webhook endpoint
+                    manage_payment_methods: Manage payment methods in Stripe Dashboard
     order_pay:
         web_elements:
             pay: Pay

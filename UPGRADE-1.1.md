@@ -1,0 +1,88 @@
+# UPGRADE FROM 1.0.x to 1.1
+
+## Assets
+
+### Make sure the plugin asset entrypoints are imported
+
+Since v1.0.9 the plugin ships its own asset entrypoints under `assets/admin/` and `assets/shop/`. The admin entrypoint 
+adds styling required by the redesigned payment method gateway configuration form. If you have not added these imports yet, 
+do it now.
+
+Import them from your application's Encore entrypoints:
+
+```js
+// assets/admin/entrypoint.js
+
+// ...
+import '../../vendor/flux-se/sylius-stripe-plugin/assets/admin/entrypoint';
+```
+```js
+// assets/shop/entrypoint.js
+
+// ...
+import '../../vendor/flux-se/sylius-stripe-plugin/assets/shop/entrypoint';
+```
+
+Then (re)build assets:
+
+```shell
+bin/console assets:install public
+
+yarn install
+yarn encore dev   # or: yarn encore prod
+```
+
+Fresh installs using the Symfony Flex contrib recipe get these imports appended automatically — this step is only 
+required for projects upgrading in place. See [docs/INSTALLATION.md](docs/INSTALLATION.md) for the full manual setup.
+
+## Gateway configuration
+
+### `payment_method_types` is deprecated
+
+Configuring `payment_method_types` in the Stripe gateway configuration (Sylius admin → Payment methods → 
+Stripe (Checkout) / Stripe (Web Elements)) is deprecated and will be removed in 2.0.
+
+When the field is non-empty, the plugin sends a static `payment_method_types` array to Stripe at PaymentIntent / Checkout 
+Session creation, which overrides Stripe's automatic payment methods and prevents the Stripe Dashboard from controlling 
+which methods are displayed to customers.
+
+**Migration:**
+
+1. Open your Stripe Dashboard → Settings → Payment methods and enable the methods you want to offer.
+2. In Sylius admin, edit your Stripe payment method and clear all entries from the "Payment method types" field.
+3. Save. Stripe will now dynamically present the most relevant subset of the configured methods based on the customer's 
+   country, currency and transaction amount.
+
+Existing installations that keep the field populated will continue to work in 1.1 with the legacy behaviour, 
+but a deprecation notice will be triggered on every payment request. In 2.0 the field, the runtime provider 
+and the related admin form section will be removed.
+
+**For developers extending the plugin**, the following will be removed in Stripe Plugin 2.0:
+
+- Class `FluxSE\SyliusStripePlugin\Provider\PaymentMethodTypesProvider`
+- Service `flux_se.sylius_stripe.provider.checkout.create.payment_method_types`
+- Service `flux_se.sylius_stripe.provider.web_elements.create.payment_method_types`
+
+If your custom code references the class or either service (e.g. via DI decoration, alias or direct injection), 
+remove those references before upgrading to 2.0.
+
+### `secret_key` set to a standard Stripe secret key (`sk_*`) is deprecated
+
+Pasting a standard Stripe secret key (`sk_test_…` / `sk_live_…`) into the `Restricted API key (recommended) or secret key` 
+field of the Stripe gateway configuration is deprecated since 1.1 and will be removed in 2.0. From 2.0 onwards, only
+Restricted API Keys (`rk_test_…` / `rk_live_…`) will be accepted.
+
+A deprecation notice is triggered on every Stripe API client build for payment methods that still hold a `sk_*` key. 
+Existing installations continue to work in 1.1, the field validator and the runtime path are unchanged.
+
+**Migration:**
+
+1. Install the [Sylius Stripe App][link-sylius-stripe-app] on your Stripe account.
+2. Open the App's Settings Page and copy the generated Restricted API Key (`rk_test_…` / `rk_live_…`).
+3. In Sylius admin, edit your Stripe payment method and paste the `rk_*` key into the `Restricted API key (recommended) or secret key` 
+   field, replacing the previous `sk_*` value. Save.
+
+The App ships with the minimum scopes the plugin needs, which is also why it becomes the only supported source for 
+the `secret_key` field in 2.0.
+
+[link-sylius-stripe-app]: https://marketplace.stripe.com/apps/install/link/com.sylius.stripe
