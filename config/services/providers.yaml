@@ -15,8 +15,15 @@ services:
             - '%flux_se.sylius_stripe.factories%'
             - '@sylius.repository.payment_request'
             - '@flux_se.sylius_stripe.stripe.resolver.event_resolver'
+            - '@flux_se.sylius_stripe.provider.refund_event_token_hash_resolver'
         tags:
             - name: sylius.payment_request.payment_notify_provider
+
+    flux_se.sylius_stripe.provider.refund_event_token_hash_resolver:
+        class: FluxSE\SyliusStripePlugin\Provider\RefundEventTokenHashResolver
+        arguments:
+            - '@flux_se.sylius_stripe.stripe.factory.client'
+    FluxSE\SyliusStripePlugin\Provider\RefundEventTokenHashResolverInterface: '@flux_se.sylius_stripe.provider.refund_event_token_hash_resolver'
 
     flux_se.sylius_stripe.processor.transition.checkout.session:
         class: FluxSE\SyliusStripePlugin\Provider\Transition\Checkout\SessionTransitionProvider

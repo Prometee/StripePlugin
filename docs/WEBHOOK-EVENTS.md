@@ -21,6 +21,7 @@ whether Express Checkout (ECE) on the cart page is enabled.
 | `stripe_checkout` | **ON** | **ON** | the four `checkout.session.*` above **and** `payment_intent.succeeded`, `payment_intent.canceled`, `payment_intent.processing` |
 | `stripe_web_elements` | any | any | `payment_intent.succeeded`, `payment_intent.canceled`, `payment_intent.processing` |
 | any using `setup` mode | — | — | add `setup_intent.succeeded`, `setup_intent.canceled` on top of the rows above |
+| any (both gateways) | — | — | add `charge.refunded` **only if** refunds are initiated from the Stripe Dashboard (see below) |
 
 Why the `payment_intent.*` events matter for `stripe_checkout`:
 
@@ -36,6 +37,21 @@ Why the `payment_intent.*` events matter for `stripe_checkout`:
 > 💡 Subscribing to the three `payment_intent.*` events on a `stripe_checkout` endpoint is harmless even when neither
 > flag is on — the plugin resolves each event against the Sylius `PaymentRequest` via the `token_hash` metadata and
 > returns 2xx without state changes if there is nothing to transition.
+
+### Refunds initiated from the Stripe Dashboard (`charge.refunded`)
+
+A refund made through the Sylius admin does **not** need a webhook — the plugin updates the payment state directly.
+The `charge.refunded` event is only required when a refund is triggered **from the Stripe Dashboard** (or the Stripe
+API) so that Sylius learns about it. It works for both gateways.
+
+- **Full refund** (`charge.refunded === true`) → the `Payment` transitions `completed → refunded`.
+- **Partial refund** (`charge.refunded === false`, `amount_refunded > 0`) → Sylius has no native "partially refunded"
+  payment state, so the plugin intentionally leaves the state unchanged (it logs an `info` message and returns 2xx).
+
+Resolution detail: the `charge.refunded` event object is a `Charge`, which carries **no** `token_hash` metadata
+(Stripe does not copy PaymentIntent metadata onto the Charge). The plugin therefore reads `charge.payment_intent` and
+re-fetches the related PaymentIntent to read its `token_hash` (see `StripeNotifyPaymentProvider` /
+`RefundEventTokenHashResolver`), then drives the refund through `ChargeRefundedWebhookEventProcessor`.
 
 ## How are webhook events listened to using this plugin?
 Here is how the Sylius `PaymentRequest` notify process is working:
@@ -75,6 +91,10 @@ Finally, when the `NotifyPaymentRequest` command is handled, the `NotifyPaymentR
 ## How to listen to `Payment related` Stripe events?
 
 When the event already contains a `data.object.metadata.token_hash` key and the value is an existing `PaymentRequest` hash.
+
+> When the event object itself has no `token_hash` (e.g. a `Charge` from `charge.refunded`) but references a
+> PaymentIntent, the plugin resolves it by re-fetching that PaymentIntent — see the
+> [Refunds initiated from the Stripe Dashboard](#refunds-initiated-from-the-stripe-dashboard-chargerefunded) section.
 
 > If it's not the case, go to the next chapter [to listen to `NON Payment related` Stripe events](#how-to-listen-to-non-payment-related-stripe-events).
 
