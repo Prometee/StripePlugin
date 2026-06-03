@@ -10,6 +10,15 @@ parameters:
             - !php/const Stripe\Event::PAYMENT_INTENT_SUCCEEDED
             - !php/const Stripe\Event::PAYMENT_INTENT_CANCELED
             - !php/const Stripe\Event::PAYMENT_INTENT_PROCESSING
+        'stripe_checkout':
+            - !php/const Stripe\Event::PAYMENT_INTENT_SUCCEEDED
+            - !php/const Stripe\Event::PAYMENT_INTENT_CANCELED
+            - !php/const Stripe\Event::PAYMENT_INTENT_PROCESSING
+    flux_se.sylius_stripe.processor.webhook_event.charge_refunded:
+        'stripe_web_elements':
+            - !php/const Stripe\Event::CHARGE_REFUNDED
+        'stripe_checkout':
+            - !php/const Stripe\Event::CHARGE_REFUNDED
 
 services:
     
@@ -57,3 +66,25 @@ services:
             - '@flux_se.sylius_stripe.manager.web_elements.retrieve'
         tags:
             - name: flux_se.sylius_stripe.processor.webhook_event.web_elements
+            # Express Checkout on cart always creates a PaymentIntent. When the merchant enables
+            # ECE on a stripe_checkout PaymentMethod, payment_intent.* webhooks land on that
+            # method's URL too — reuse the same processor here.
+            - name: flux_se.sylius_stripe.processor.webhook_event.checkout
+
+    flux_se.sylius_stripe.processor.webhook_event.charge_refunded:
+        class: FluxSE\SyliusStripePlugin\Processor\ChargeRefundedWebhookEventProcessor
+        arguments:
+            - '%flux_se.sylius_stripe.processor.webhook_event.charge_refunded%'
+            # A "charge.refunded" event only references a PaymentIntent id, so we retrieve the
+            # PaymentIntent (with "latest_charge" expanded) regardless of the gateway factory.
+            - '@flux_se.sylius_stripe.manager.web_elements.retrieve'
+            - '@logger'
+        tags:
+            - name: flux_se.sylius_stripe.processor.webhook_event.web_elements
+            - name: flux_se.sylius_stripe.processor.webhook_event.checkout
+
+    flux_se.sylius_stripe.processor.payment_transition.checkout.composite:
+        class: FluxSE\SyliusStripePlugin\Processor\Checkout\CheckoutOrPaymentIntentTransitionProcessor
+        arguments:
+            - '@flux_se.sylius_stripe.processor.payment_transition.checkout'
+            - '@flux_se.sylius_stripe.processor.payment_transition.web_elements'

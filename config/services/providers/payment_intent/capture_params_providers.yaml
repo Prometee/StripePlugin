@@ -1,0 +1,18 @@
+parameters:
+    flux_se.sylius_stripe.payment_intent.capture.expand_fields:
+        - 'latest_charge'
+        - 'payment_method'
+
+services:
+    flux_se.sylius_stripe.provider.payment_intent.capture.params:
+        class: FluxSE\SyliusStripePlugin\Provider\CompositeParamsProvider
+        arguments:
+            - !tagged_iterator flux_se.sylius_stripe.provider.payment_intent.capture.inner_params
+
+    flux_se.sylius_stripe.provider.payment_intent.capture.expand:
+        class: FluxSE\SyliusStripePlugin\Provider\ExpandProvider
+        arguments:
+            - '%flux_se.sylius_stripe.payment_intent.capture.expand_fields%'
+        tags:
+            - name: flux_se.sylius_stripe.provider.payment_intent.capture.inner_params
+              priority: -100

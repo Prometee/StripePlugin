@@ -72,12 +72,6 @@ final class StripeWebElementsMocker
     {
         // CaptureEnd
         $this->mockCancelPayment(PaymentIntent::CAPTURE_METHOD_AUTOMATIC);
-
-        // The Cancel workflow event is triggered
-        $this->paymentIntentMocker->mockRetrieveAction([
-            'status' => PaymentIntent::STATUS_CANCELED,
-            'capture_method' => PaymentIntent::CAPTURE_METHOD_AUTOMATIC,
-        ]);
     }
 
     public function mockSuccessfulPayment(): void

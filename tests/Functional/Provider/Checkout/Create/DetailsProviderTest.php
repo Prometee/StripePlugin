@@ -89,6 +89,7 @@ class DetailsProviderTest extends KernelTestCase
         $paymentRequest = $fixtures[$paymentRequestName];
 
         $expectedDetails['metadata']['token_hash'] = $paymentRequest->getId();
+        $expectedDetails['payment_intent_data']['metadata']['token_hash'] = $paymentRequest->getId();
         if (null === $paymentRequest->getPayload()) {
             // Using Shop UI, the locale context is given by the current request context, here we forced it.
             $locale = 'en_US';
@@ -122,6 +123,15 @@ class DetailsProviderTest extends KernelTestCase
      */
     public static function getPaymentRequestAndExpectedDetails(): iterable
     {
+        $orderMetadata = [
+            'order_number' => '000000001',
+            'order_total' => '1500',
+            'currency' => 'USD',
+            'locale' => 'en_US',
+            'product_categories' => 'mugs,tea',
+            'first_order' => 'yes',
+        ];
+
         $expected = [
             'customer_email' => 'oliver@doe.com',
             'line_items' => [
@@ -143,7 +153,7 @@ class DetailsProviderTest extends KernelTestCase
                         'unit_amount' => 0,
                         'currency' => 'USD',
                         'product_data' => [
-                            'name' => '1x - Mug',
+                            'name' => '1x - Tea',
                             'images' => [
                                 'https://placehold.co/300',
                             ],
@@ -165,6 +175,9 @@ class DetailsProviderTest extends KernelTestCase
             'mode' => 'payment',
             'success_url' => 'https://myshop.tld/target-path',
             'cancel_url' => 'https://myshop.tld/after-path',
+            'payment_intent_data' => [
+                'metadata' => $orderMetadata,
+            ],
             'metadata' => [
                 'token_hash' => '',
             ],
@@ -188,6 +201,7 @@ class DetailsProviderTest extends KernelTestCase
             array_merge($expected, [
                 'payment_intent_data' => [
                     'capture_method' => 'manual',
+                    'metadata' => $orderMetadata,
                 ],
             ]),
         ];
@@ -199,6 +213,7 @@ class DetailsProviderTest extends KernelTestCase
                 'cancel_url' => 'https://myshop.tld/after-path',
                 'payment_intent_data' => [
                     'capture_method' => 'manual',
+                    'metadata' => $orderMetadata,
                 ],
             ]),
         ];
