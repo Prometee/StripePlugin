@@ -38,6 +38,10 @@ final class AppearanceBuilder
             $appearance['variables'] = $variables;
         }
 
+        if ([] !== $appearance && !isset($appearance['theme'])) {
+            $appearance['theme'] = 'stripe';
+        }
+
         return $appearance;
     }
 }

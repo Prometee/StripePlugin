@@ -60,6 +60,29 @@ $stripe-variables-border-color: #E1E8F3;
     }
 }
 
+.stripe-legacy-row {
+    td {
+        background-color: var(--tblr-warning-lt);
+    }
+}
+
+.stripe-legacy-row-badge {
+    color: #CE8400;
+    border-color: var(--tblr-warning);
+    background-color: rgba(#E39200, 0.22);
+    font-size: 0.75rem;
+    cursor: default;
+    pointer-events: none;
+}
+
+.stripe-legacy-key-alert {
+    color: #D28702;
+
+    .icon {
+        color: #D28702;
+    }
+}
+
 .mt-4-md-field {
     margin-top: 1.5rem;
 }
