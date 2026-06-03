@@ -80,9 +80,6 @@
         }
     },
     "extra": {
-        "branch-alias": {
-            "dev-main": "1.0-dev"
-        },
         "public-dir": "vendor/sylius/test-application/public"
     }
 }
