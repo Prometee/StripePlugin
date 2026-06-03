@@ -5,10 +5,12 @@ declare(strict_types=1);
 namespace Tests\FluxSE\SyliusStripePlugin\Unit\Normalizer;
 
 use FluxSE\SyliusStripePlugin\Normalizer\ExpressCheckoutAddressNormalizer;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use PHPUnit\Framework\TestCase;
 use Sylius\Component\Core\Model\Address;
 use Sylius\Component\Resource\Factory\FactoryInterface;
 
+#[AllowMockObjectsWithoutExpectations]
 final class ExpressCheckoutAddressNormalizerTest extends TestCase
 {
     private ExpressCheckoutAddressNormalizer $normalizer;

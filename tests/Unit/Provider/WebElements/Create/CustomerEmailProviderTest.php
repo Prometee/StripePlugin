@@ -5,12 +5,14 @@ declare(strict_types=1);
 namespace Tests\FluxSE\SyliusStripePlugin\Unit\Provider\WebElements\Create;
 
 use FluxSE\SyliusStripePlugin\Provider\WebElements\Create\CustomerEmailProvider;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use PHPUnit\Framework\TestCase;
 use Sylius\Component\Core\Model\CustomerInterface;
 use Sylius\Component\Core\Model\OrderInterface;
 use Sylius\Component\Core\Model\PaymentInterface;
 use Sylius\Component\Payment\Model\PaymentRequestInterface;
 
+#[AllowMockObjectsWithoutExpectations]
 final class CustomerEmailProviderTest extends TestCase
 {
     private CustomerEmailProvider $provider;

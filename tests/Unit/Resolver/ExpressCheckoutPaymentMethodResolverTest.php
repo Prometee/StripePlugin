@@ -5,12 +5,14 @@ declare(strict_types=1);
 namespace Tests\FluxSE\SyliusStripePlugin\Unit\Resolver;
 
 use FluxSE\SyliusStripePlugin\Resolver\ExpressCheckoutPaymentMethodResolver;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use PHPUnit\Framework\TestCase;
 use Sylius\Component\Core\Model\ChannelInterface;
 use Sylius\Component\Core\Model\PaymentMethodInterface;
 use Sylius\Component\Core\Repository\PaymentMethodRepositoryInterface;
 use Sylius\Component\Payment\Model\GatewayConfigInterface;
 
+#[AllowMockObjectsWithoutExpectations]
 final class ExpressCheckoutPaymentMethodResolverTest extends TestCase
 {
     private const SUPPORTED_FACTORIES = ['stripe_checkout', 'stripe_web_elements'];

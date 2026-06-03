@@ -6,6 +6,7 @@ namespace Tests\FluxSE\SyliusStripePlugin\Unit\Provider;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use FluxSE\SyliusStripePlugin\Provider\ProductCategoriesMetadataProvider;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use PHPUnit\Framework\TestCase;
 use Stripe\PaymentIntent;
 use Sylius\Component\Core\Model\OrderInterface;
@@ -15,6 +16,7 @@ use Sylius\Component\Core\Model\ProductInterface;
 use Sylius\Component\Core\Model\TaxonInterface;
 use Sylius\Component\Payment\Model\PaymentRequestInterface;
 
+#[AllowMockObjectsWithoutExpectations]
 final class ProductCategoriesMetadataProviderTest extends TestCase
 {
     /** @var ProductCategoriesMetadataProvider<PaymentIntent> */

@@ -8,6 +8,7 @@ use Doctrine\Common\DataFixtures\Purger\ORMPurger;
 use Doctrine\ORM\EntityManager;
 use Fidry\AliceDataFixtures\Loader\PurgerLoader;
 use FluxSE\SyliusStripePlugin\Provider\ParamsProviderInterface;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Stripe\PaymentIntent;
 use Sylius\Component\Payment\Model\PaymentRequestInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
@@ -54,14 +55,13 @@ class DetailsProviderTest extends KernelTestCase
     }
 
     /**
-     * @dataProvider getPaymentRequestAndExpectedDetails
-     *
      * @param array{
      *     metadata: array{
      *         token_hash: string
      *     }
      * } $expectedDetails
      */
+    #[DataProvider('getPaymentRequestAndExpectedDetails')]
     public function test_it_get_checkout_session_create_details(
         string $paymentRequestName,
         array $expectedDetails,

@@ -7,12 +7,14 @@ namespace Tests\FluxSE\SyliusStripePlugin\Unit\Processor\Checkout;
 use FluxSE\SyliusStripePlugin\Processor\Checkout\CheckoutOrPaymentIntentTransitionProcessor;
 use FluxSE\SyliusStripePlugin\Processor\PaymentTransitionProcessorInterface;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use PHPUnit\Framework\TestCase;
 use Stripe\Checkout\Session;
 use Stripe\PaymentIntent;
 use Sylius\Component\Core\Model\PaymentInterface;
 use Sylius\Component\Payment\Model\PaymentRequestInterface;
 
+#[AllowMockObjectsWithoutExpectations]
 final class CheckoutOrPaymentIntentTransitionProcessorTest extends TestCase
 {
     /** @var PaymentTransitionProcessorInterface&MockObject */

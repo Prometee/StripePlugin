@@ -7,6 +7,7 @@ namespace Tests\FluxSE\SyliusStripePlugin\Unit\Processor;
 use FluxSE\SyliusStripePlugin\Manager\RetrieveManagerInterface;
 use FluxSE\SyliusStripePlugin\Processor\ChargeRefundedWebhookEventProcessor;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 use Stripe\Charge;
@@ -17,6 +18,7 @@ use Sylius\Component\Payment\Model\PaymentInterface;
 use Sylius\Component\Payment\Model\PaymentMethodInterface;
 use Sylius\Component\Payment\Model\PaymentRequestInterface;
 
+#[AllowMockObjectsWithoutExpectations]
 final class ChargeRefundedWebhookEventProcessorTest extends TestCase
 {
     /** @var array<string, string[]> */

@@ -6,6 +6,7 @@ namespace Tests\FluxSE\SyliusStripePlugin\Unit\CommandProvider\Checkout;
 
 use FluxSE\SyliusStripePlugin\CommandProvider\Checkout\CheckoutOrPaymentIntentCommandProvider;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use PHPUnit\Framework\TestCase;
 use Stripe\Checkout\Session;
 use Stripe\PaymentIntent;
@@ -13,6 +14,7 @@ use Sylius\Bundle\PaymentBundle\CommandProvider\PaymentRequestCommandProviderInt
 use Sylius\Component\Core\Model\PaymentInterface;
 use Sylius\Component\Payment\Model\PaymentRequestInterface;
 
+#[AllowMockObjectsWithoutExpectations]
 final class CheckoutOrPaymentIntentCommandProviderTest extends TestCase
 {
     /** @var PaymentRequestCommandProviderInterface&MockObject */

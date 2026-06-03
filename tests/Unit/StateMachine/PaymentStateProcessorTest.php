@@ -7,6 +7,7 @@ namespace Tests\FluxSE\SyliusStripePlugin\Unit\StateMachine;
 use FluxSE\SyliusStripePlugin\StateMachine\PaymentStateProcessor;
 use FluxSE\SyliusStripePlugin\StateMachine\StripeStateAppliedCheckerInterface;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use PHPUnit\Framework\TestCase;
 use Sylius\Bundle\PaymentBundle\Announcer\PaymentRequestAnnouncerInterface;
 use Sylius\Bundle\PaymentBundle\Checker\FinalizedPaymentRequestCheckerInterface;
@@ -17,6 +18,7 @@ use Sylius\Component\Payment\Factory\PaymentRequestFactoryInterface;
 use Sylius\Component\Payment\Model\PaymentRequestInterface;
 use Sylius\Component\Payment\Repository\PaymentRequestRepositoryInterface;
 
+#[AllowMockObjectsWithoutExpectations]
 final class PaymentStateProcessorTest extends TestCase
 {
     private GatewayFactoryNameProviderInterface&MockObject $gatewayFactoryNameProvider;

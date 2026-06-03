@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\FluxSE\SyliusStripePlugin\Unit\Provider;
 
 use FluxSE\SyliusStripePlugin\Provider\FirstOrderFlagMetadataProvider;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use PHPUnit\Framework\TestCase;
 use Sylius\Component\Core\Model\CustomerInterface;
 use Sylius\Component\Core\Model\OrderInterface;
@@ -12,6 +13,7 @@ use Sylius\Component\Core\Model\PaymentInterface;
 use Sylius\Component\Core\Repository\OrderRepositoryInterface;
 use Sylius\Component\Payment\Model\PaymentRequestInterface;
 
+#[AllowMockObjectsWithoutExpectations]
 final class FirstOrderFlagMetadataProviderTest extends TestCase
 {
     public function test_it_marks_first_order_when_customer_has_one_order(): void

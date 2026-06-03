@@ -11,6 +11,7 @@ use FluxSE\SyliusStripePlugin\ExpressCheckout\Exception\ChannelUnavailableExcept
 use FluxSE\SyliusStripePlugin\ExpressCheckout\Exception\PaymentMethodUnavailableException;
 use FluxSE\SyliusStripePlugin\Resolver\ExpressCheckoutPaymentMethodResolverInterface;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use PHPUnit\Framework\TestCase;
 use Sylius\Component\Addressing\Model\CountryInterface;
 use Sylius\Component\Channel\Context\ChannelContextInterface;
@@ -22,6 +23,7 @@ use Sylius\Component\Currency\Model\CurrencyInterface;
 use Sylius\Component\Order\Context\CartContextInterface;
 use Sylius\Component\Order\Context\CartNotFoundException;
 
+#[AllowMockObjectsWithoutExpectations]
 final class ConfigurationProviderTest extends TestCase
 {
     /** @var CartContextInterface&MockObject */

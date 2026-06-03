@@ -5,11 +5,13 @@ declare(strict_types=1);
 namespace Tests\FluxSE\SyliusStripePlugin\Unit\Provider\Checkout\Create;
 
 use FluxSE\SyliusStripePlugin\Provider\Checkout\Create\AdaptivePricingProvider;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use PHPUnit\Framework\TestCase;
 use Sylius\Component\Core\Model\PaymentMethodInterface;
 use Sylius\Component\Payment\Model\GatewayConfigInterface;
 use Sylius\Component\Payment\Model\PaymentRequestInterface;
 
+#[AllowMockObjectsWithoutExpectations]
 final class AdaptivePricingProviderTest extends TestCase
 {
     public function test_it_enables_adaptive_pricing_when_gateway_flag_is_true(): void

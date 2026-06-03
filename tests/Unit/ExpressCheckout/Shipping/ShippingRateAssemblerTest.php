@@ -6,11 +6,13 @@ namespace Tests\FluxSE\SyliusStripePlugin\Unit\ExpressCheckout\Shipping;
 
 use FluxSE\SyliusStripePlugin\ExpressCheckout\Shipping\ShippingRateAssembler;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use PHPUnit\Framework\TestCase;
 use Sylius\Component\Core\Model\ShipmentInterface;
 use Sylius\Component\Shipping\Calculator\DelegatingCalculatorInterface;
 use Sylius\Component\Shipping\Model\ShippingMethodInterface;
 
+#[AllowMockObjectsWithoutExpectations]
 final class ShippingRateAssemblerTest extends TestCase
 {
     /** @var DelegatingCalculatorInterface&MockObject */
