@@ -6,6 +6,7 @@ namespace FluxSE\SyliusStripePlugin;
 
 use FluxSE\SyliusStripePlugin\DependencyInjection\CompilerPass\LiveTwigComponentCompilerPass;
 use Sylius\Bundle\CoreBundle\Application\SyliusPluginTrait;
+use Sylius\Telemetry\TelemetryCompilerPass;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
@@ -17,6 +18,7 @@ final class FluxSESyliusStripePlugin extends Bundle
     {
         // Before SyliusUiBundle compiler pass
         $container->addCompilerPass(new LiveTwigComponentCompilerPass(), priority: 501);
+        $container->addCompilerPass(new TelemetryCompilerPass());
     }
 
     public function getPath(): string
