@@ -27,7 +27,9 @@ flux_se_sylius_stripe_plugin:
                     enable_adaptive_pricing: Affichez les prix de paiement dans la devise locale du client tout en continuant à encaisser dans votre propre devise. Stripe applique un écart de change sur les montants convertis à partir de 2 %, et les remboursements restent dans votre devise de règlement. Remplace le réglage Adaptive Pricing du tableau de bord uniquement pour cette passerelle. Examinez l'ensemble des coûts avant d'activer cette option.
                     webhook_secret_key: Créez un nouveau webhook endpoint pour créer une clé secrète de webhook sur le tableau de bord Stripe et écoutez plusieurs événements.
                 action:
-                    open_stripe_app: Ouvrir l'application Sylius Stripe
+                    view_stripe_app: Voir l'application Sylius Stripe
+                    or: ou
+                    install_stripe_app: installez-la directement
                     learn_more_restricted_keys: En savoir plus sur les clés d'API restreintes
                     replace_key_badge: Remplacez la clé par une clé d'API restreinte
                     webhook_secret_key: Créez un nouveau webhook endpoint

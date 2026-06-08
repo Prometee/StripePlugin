@@ -27,7 +27,9 @@ flux_se_sylius_stripe_plugin:
                     enable_adaptive_pricing: Display checkout prices in the customer's local currency while you continue to settle in your own currency. Stripe applies an FX spread on converted amounts starting at 2%, and refunds remain in your settlement currency. Overrides the dashboard-wide Adaptive Pricing setting for this gateway only. Review the full pricing breakdown before enabling.
                     webhook_secret_key: Create a new webhook endpoint to generate a new webhook secret key on the Stripe dashboard and listen for several events.
                 action:
-                    open_stripe_app: Open Sylius Stripe App
+                    view_stripe_app: View the Sylius Stripe App
+                    or: or
+                    install_stripe_app: install it directly
                     learn_more_restricted_keys: Learn more about restricted API keys
                     replace_key_badge: Replace the key with a Restricted API Key
                     webhook_secret_key: Create a new webhook endpoint
