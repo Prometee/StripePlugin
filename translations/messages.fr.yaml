@@ -22,7 +22,9 @@ flux_se_sylius_stripe_plugin:
                     webhook_secret_key: Créez un nouveau webhook endpoint pour créer une clé secrète de webhook sur le tableau de bord Stripe et écoutez plusieurs événements.
                     payment_method_type: Il n'est normalement pas nécessaire de définir des méthodes de paiement, vous pouvez les gérer dans votre tableau de bord Stripe.
                 action:
-                    open_stripe_app: Ouvrir l'application Sylius Stripe
+                    view_stripe_app: Voir l'application Sylius Stripe
+                    or: ou
+                    install_stripe_app: installez-la directement
                     learn_more_restricted_keys: En savoir plus sur les clés d'API restreintes
                     secret_key: Ouvrir les clés API du tableau de bord Stripe
                     webhook_secret_key: Créez un nouveau webhook endpoint

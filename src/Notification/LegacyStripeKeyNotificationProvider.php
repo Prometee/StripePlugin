@@ -55,7 +55,10 @@ final readonly class LegacyStripeKeyNotificationProvider implements Notification
                 'message' => 'flux_se_sylius_stripe_plugin.admin.notification.legacy_secret_key',
                 '%payment_method_name%' => (string) $paymentMethod->getName(),
                 'route' => 'sylius_admin_payment_method_update',
-                'route_parameters' => ['id' => $paymentMethod->getId()],
+                'route_parameters' => [
+                    'id' => $paymentMethod->getId(),
+                    '_fragment' => 'stripe-gateway-configuration',
+                ],
             ];
         }
 
