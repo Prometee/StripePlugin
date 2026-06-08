@@ -1,0 +1,7 @@
+{% set appearance_form = hookable_metadata.context.form.gatewayConfig.config.stripe_appearance %}
+
+<div class="col-12 col-lg-4">
+    {{ form_row(appearance_form.fontFamily) }}
+    {{ form_row(appearance_form.borderRadius, {attr: {placeholder: '4px'}}) }}
+    {{ form_row(appearance_form.spacingUnit, {attr: {placeholder: '4px'}}) }}
+</div>

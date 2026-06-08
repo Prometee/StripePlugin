@@ -24,6 +24,7 @@ final readonly class StripeNotifyPaymentProvider implements NotifyPaymentProvide
         private array $supportedFactories,
         private PaymentRequestRepositoryInterface $paymentRequestRepository,
         private EventResolverInterface $eventResolver,
+        private RefundEventTokenHashResolverInterface $refundEventTokenHashResolver,
     ) {
     }
 
@@ -43,17 +44,12 @@ final readonly class StripeNotifyPaymentProvider implements NotifyPaymentProvide
             throw new \LogicException('The Stripe event data object is not a StripeObject.');
         }
 
-        /** @var ArrayAccess<string, string>|null $metadata */
-        $metadata = $object->offsetGet('metadata');
-        if (false === $metadata instanceof ArrayAccess) {
-            throw new \LogicException('The Stripe event metadata is not an \ArrayAccess.');
-        }
-
-        $hash = $metadata->offsetGet(MetadataProviderInterface::DEFAULT_TOKEN_HASH_KEY_NAME);
+        $hash = $this->resolveTokenHash($object, $paymentMethod);
         if (!is_string($hash)) {
             throw new \LogicException(sprintf(
-                'The Stripe event object metadata (key: "%s") must be a string.',
+                'Unable to resolve the token hash (key: "%s") for this Stripe event (ID:"%s").',
                 MetadataProviderInterface::DEFAULT_TOKEN_HASH_KEY_NAME,
+                $event->id,
             ));
         }
 
@@ -69,6 +65,24 @@ final readonly class StripeNotifyPaymentProvider implements NotifyPaymentProvide
         }
 
         return $paymentRequest->getPayment();
+    }
+
+    /**
+     * Reads the token hash from the event object metadata. Refund events (e.g. "charge.refunded")
+     * carry a Charge whose metadata has no token hash, so we fall back to the related PaymentIntent.
+     */
+    private function resolveTokenHash(StripeObject $object, PaymentMethodInterface $paymentMethod): ?string
+    {
+        /** @var ArrayAccess<string, string>|null $metadata */
+        $metadata = $object->offsetGet('metadata');
+        if ($metadata instanceof ArrayAccess) {
+            $hash = $metadata->offsetGet(MetadataProviderInterface::DEFAULT_TOKEN_HASH_KEY_NAME);
+            if (is_string($hash)) {
+                return $hash;
+            }
+        }
+
+        return $this->refundEventTokenHashResolver->resolve($object, $paymentMethod);
     }
 
     public function supports(Request $request, PaymentMethodInterface $paymentMethod): bool

@@ -6,6 +6,7 @@ namespace Tests\FluxSE\SyliusStripePlugin\Unit\Provider\Transition\Checkout;
 
 use FluxSE\SyliusStripePlugin\Provider\Transition\Checkout\SubscriptionModeTransitionProvider;
 use FluxSE\SyliusStripePlugin\Provider\Transition\WebElements\PaymentIntentTransitionProvider;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Stripe\Charge;
 use Stripe\Checkout\Session;
@@ -21,9 +22,7 @@ final class SubscriptionModeTransitionProviderTest extends TestCase
         $this->provider = new SubscriptionModeTransitionProvider(new PaymentIntentTransitionProvider());
     }
 
-    /**
-     * @dataProvider authorizeDataProvider
-     */
+    #[DataProvider('authorizeDataProvider')]
     public function test_is_authorize(string $paymentIntentStatus, bool $expectedResult): void
     {
         $session = $this->createSessionWithPaymentIntent($paymentIntentStatus);
@@ -44,9 +43,7 @@ final class SubscriptionModeTransitionProviderTest extends TestCase
         yield 'payment intent canceled' => [PaymentIntent::STATUS_CANCELED, false];
     }
 
-    /**
-     * @dataProvider completeDataProvider
-     */
+    #[DataProvider('completeDataProvider')]
     public function test_is_complete(string $paymentIntentStatus, string $sessionPaymentStatus, bool $chargeRefunded, bool $expectedResult): void
     {
         $session = $this->createSessionWithPaymentIntent($paymentIntentStatus, $sessionPaymentStatus, null, $chargeRefunded);
@@ -77,9 +74,7 @@ final class SubscriptionModeTransitionProviderTest extends TestCase
         self::assertFalse($result);
     }
 
-    /**
-     * @dataProvider processDataProvider
-     */
+    #[DataProvider('processDataProvider')]
     public function test_is_process(string $paymentIntentStatus, string $sessionPaymentStatus, bool $expectedResult): void
     {
         $session = $this->createSessionWithPaymentIntent($paymentIntentStatus, $sessionPaymentStatus);
@@ -100,10 +95,9 @@ final class SubscriptionModeTransitionProviderTest extends TestCase
     }
 
     /**
-     * @dataProvider cancelDataProvider
-     *
      * @param array<string, mixed>|null $lastPaymentError
      */
+    #[DataProvider('cancelDataProvider')]
     public function test_is_cancel(string $paymentIntentStatus, ?array $lastPaymentError, bool $expectedResult): void
     {
         $session = $this->createSessionWithPaymentIntent($paymentIntentStatus, Session::PAYMENT_STATUS_UNPAID, $lastPaymentError);
@@ -124,16 +118,14 @@ final class SubscriptionModeTransitionProviderTest extends TestCase
         yield 'succeeded status' => [PaymentIntent::STATUS_SUCCEEDED, null, false];
     }
 
-    /**
-     * @dataProvider refundDataProvider
-     */
+    #[DataProvider('refundDataProvider')]
     public function test_is_refund(string $paymentIntentStatus, string $sessionPaymentStatus, bool $chargeRefunded, bool $expectedResult): void
     {
         $session = $this->createSessionWithPaymentIntent(
             $paymentIntentStatus,
             $sessionPaymentStatus,
             null,
-            $chargeRefunded
+            $chargeRefunded,
         );
 
         $result = $this->provider->isRefund($session);
@@ -185,6 +177,27 @@ final class SubscriptionModeTransitionProviderTest extends TestCase
         $this->provider->isAuthorize($session);
     }
 
+    public function test_it_throws_exception_when_invoice_payments_is_not_expanded(): void
+    {
+        $session = Session::constructFrom([
+            'id' => 'cs_test_1',
+            'object' => Session::OBJECT_NAME,
+            'mode' => Session::MODE_SUBSCRIPTION,
+            'status' => Session::STATUS_COMPLETE,
+            'payment_status' => Session::PAYMENT_STATUS_PAID,
+            'invoice' => [
+                'id' => 'in_test_1',
+                'object' => Invoice::OBJECT_NAME,
+                // No 'payments' field at all
+            ],
+        ]);
+
+        $this->expectException(\LogicException::class);
+        $this->expectExceptionMessageMatches('/need to get access to the Invoice payments collection/');
+
+        $this->provider->isAuthorize($session);
+    }
+
     public function test_it_throws_exception_when_payment_intent_is_not_expanded(): void
     {
         $session = Session::constructFrom([
@@ -196,7 +209,19 @@ final class SubscriptionModeTransitionProviderTest extends TestCase
             'invoice' => [
                 'id' => 'in_test_1',
                 'object' => Invoice::OBJECT_NAME,
-                'payment_intent' => 'pi_test_1', // String instead of object
+                'payments' => [
+                    'object' => 'list',
+                    'data' => [[
+                        'id' => 'inpay_test_1',
+                        'object' => 'invoice_payment',
+                        'status' => 'paid',
+                        'payment' => [
+                            'type' => 'payment_intent',
+                            'payment_intent' => 'pi_test_1', // String instead of object
+                        ],
+                    ]],
+                    'has_more' => false,
+                ],
             ],
         ]);
 
@@ -230,7 +255,7 @@ final class SubscriptionModeTransitionProviderTest extends TestCase
         string $sessionPaymentStatus = Session::PAYMENT_STATUS_PAID,
         ?array $lastPaymentError = null,
         bool $chargeRefunded = false,
-        bool $includeCharge = true
+        bool $includeCharge = true,
     ): Session {
         $paymentIntentData = [
             'id' => 'pi_test_1',
@@ -259,9 +284,20 @@ final class SubscriptionModeTransitionProviderTest extends TestCase
             'invoice' => [
                 'id' => 'in_test_1',
                 'object' => Invoice::OBJECT_NAME,
-                'payment_intent' => $paymentIntentData,
+                'payments' => [
+                    'object' => 'list',
+                    'data' => [[
+                        'id' => 'inpay_test_1',
+                        'object' => 'invoice_payment',
+                        'status' => 'paid',
+                        'payment' => [
+                            'type' => 'payment_intent',
+                            'payment_intent' => $paymentIntentData,
+                        ],
+                    ]],
+                    'has_more' => false,
+                ],
             ],
         ]);
     }
 }
-

@@ -1,0 +1,10 @@
+{% from '@FluxSESyliusStripePlugin/admin/payment_method/form/sections/stripe_appearance/stripe_web_elements/macro/color_field.html.twig' import color_field %}
+
+{% set appearance_form = hookable_metadata.context.form.gatewayConfig.config.stripe_appearance %}
+
+<div class="col-12 col-lg-4">
+    {{ color_field(appearance_form.colorPrimary) }}
+    {{ color_field(appearance_form.colorBackground) }}
+    {{ color_field(appearance_form.colorText) }}
+    {{ color_field(appearance_form.colorDanger) }}
+</div>

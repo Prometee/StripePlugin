@@ -8,6 +8,7 @@ use Doctrine\Common\DataFixtures\Purger\ORMPurger;
 use Doctrine\ORM\EntityManager;
 use Fidry\AliceDataFixtures\Loader\PurgerLoader;
 use FluxSE\SyliusStripePlugin\Provider\ParamsProviderInterface;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Stripe\Checkout\Session;
 use Sylius\Component\Core\Model\PaymentInterface;
 use Sylius\Component\Payment\Model\PaymentRequestInterface;
@@ -60,14 +61,13 @@ class DetailsProviderTest extends KernelTestCase
     }
 
     /**
-     * @dataProvider getPaymentRequestAndExpectedDetails
-     *
      * @param array{
      *     metadata: array{token_hash: string},
      *     success_url: string,
      *     cancel_url: string,
      * } $expectedDetails
      */
+    #[DataProvider('getPaymentRequestAndExpectedDetails')]
     public function test_it_get_checkout_session_create_details(
         string $paymentRequestName,
         array $expectedDetails,
@@ -89,6 +89,7 @@ class DetailsProviderTest extends KernelTestCase
         $paymentRequest = $fixtures[$paymentRequestName];
 
         $expectedDetails['metadata']['token_hash'] = $paymentRequest->getId();
+        $expectedDetails['payment_intent_data']['metadata']['token_hash'] = $paymentRequest->getId();
         if (null === $paymentRequest->getPayload()) {
             // Using Shop UI, the locale context is given by the current request context, here we forced it.
             $locale = 'en_US';
@@ -122,6 +123,15 @@ class DetailsProviderTest extends KernelTestCase
      */
     public static function getPaymentRequestAndExpectedDetails(): iterable
     {
+        $orderMetadata = [
+            'order_number' => '000000001',
+            'order_total' => '1500',
+            'currency' => 'USD',
+            'locale' => 'en_US',
+            'product_categories' => 'mugs,tea',
+            'first_order' => 'yes',
+        ];
+
         $expected = [
             'customer_email' => 'oliver@doe.com',
             'line_items' => [
@@ -143,7 +153,7 @@ class DetailsProviderTest extends KernelTestCase
                         'unit_amount' => 0,
                         'currency' => 'USD',
                         'product_data' => [
-                            'name' => '1x - Mug',
+                            'name' => '1x - Tea',
                             'images' => [
                                 'https://placehold.co/300',
                             ],
@@ -165,6 +175,9 @@ class DetailsProviderTest extends KernelTestCase
             'mode' => 'payment',
             'success_url' => 'https://myshop.tld/target-path',
             'cancel_url' => 'https://myshop.tld/after-path',
+            'payment_intent_data' => [
+                'metadata' => $orderMetadata,
+            ],
             'metadata' => [
                 'token_hash' => '',
             ],
@@ -188,6 +201,7 @@ class DetailsProviderTest extends KernelTestCase
             array_merge($expected, [
                 'payment_intent_data' => [
                     'capture_method' => 'manual',
+                    'metadata' => $orderMetadata,
                 ],
             ]),
         ];
@@ -199,6 +213,7 @@ class DetailsProviderTest extends KernelTestCase
                 'cancel_url' => 'https://myshop.tld/after-path',
                 'payment_intent_data' => [
                     'capture_method' => 'manual',
+                    'metadata' => $orderMetadata,
                 ],
             ]),
         ];
