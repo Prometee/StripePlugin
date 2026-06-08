@@ -4,7 +4,7 @@ flux_se_sylius_stripe_plugin:
             legacy_secret_key: 'La méthode de paiement « %payment_method_name% » utilise une clé secrète legacy (sk_…). Passez à une clé d''API restreinte depuis l''application Sylius Stripe.'
         payment_method:
             index:
-                legacy_key_alert: 'Attention : Pour <u>Stripe Checkout</u>, vous devez mettre à jour votre « clé standard » vers une « clé secrète » pour garantir la continuité du service.'
+                legacy_key_alert: 'La méthode de paiement « <u>%payment_method_name%</u> » utilise une clé secrète legacy (sk_…). Passez à une clé d''API restreinte depuis l''application Sylius Stripe pour garantir la continuité du service.'
                 legacy_key_alert_button: 'Mettre à jour la clé'
                 legacy_key_requires_action: 'Action requise'
     gateway_factory:
