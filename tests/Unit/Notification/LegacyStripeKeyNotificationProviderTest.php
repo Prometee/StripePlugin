@@ -133,13 +133,13 @@ final class LegacyStripeKeyNotificationProviderTest extends TestCase
                 'message' => 'flux_se_sylius_stripe_plugin.admin.notification.legacy_secret_key',
                 '%payment_method_name%' => 'Stripe Checkout',
                 'route' => 'sylius_admin_payment_method_update',
-                'route_parameters' => ['id' => 11],
+                'route_parameters' => ['id' => 11, '_fragment' => 'stripe-gateway-configuration'],
             ],
             'legacy_stripe_secret_key.13' => [
                 'message' => 'flux_se_sylius_stripe_plugin.admin.notification.legacy_secret_key',
                 '%payment_method_name%' => 'Stripe Web Elements',
                 'route' => 'sylius_admin_payment_method_update',
-                'route_parameters' => ['id' => 13],
+                'route_parameters' => ['id' => 13, '_fragment' => 'stripe-gateway-configuration'],
             ],
         ], $notifications);
     }

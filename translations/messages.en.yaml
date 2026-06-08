@@ -22,7 +22,9 @@ flux_se_sylius_stripe_plugin:
                     webhook_secret_key: Create a new webhook endpoint to generate a new webhook secret key on the Stripe dashboard and listen for several events.
                     payment_method_types_deprecated: This setting is deprecated and will be removed in Stripe Plugin 2.0. Leave this list empty and manage active payment methods directly in your Stripe Dashboard, so Stripe can dynamically present the best subset to each customer.
                 action:
-                    open_stripe_app: Open Sylius Stripe App
+                    view_stripe_app: View the Sylius Stripe App
+                    or: or
+                    install_stripe_app: install it directly
                     learn_more_restricted_keys: Learn more about restricted API keys
                     secret_key: Open Stripe Dashboard API keys
                     webhook_secret_key: Create a new webhook endpoint
