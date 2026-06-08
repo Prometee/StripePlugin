@@ -397,4 +397,27 @@ definition that does **not** use the bundled one. Add
 `@flux_se.sylius_stripe.provider.refund_event_token_hash_resolver` (or any other
 `RefundEventTokenHashResolverInterface` implementation) as the fourth constructor argument.
 
+## `LegacyStripeKeyNotificationProvider` constructor signature changed
+
+`FluxSE\SyliusStripePlugin\Notification\LegacyStripeKeyNotificationProvider` no longer resolves the legacy Stripe
+payment methods itself. The four arguments that did the lookup
+(`PaymentMethodRepositoryInterface $paymentMethodRepository`, `GatewayFactoryNameProviderInterface $gatewayFactoryNameProvider`,
+`LegacyKeyDetectorInterface $legacyKeyDetector`, `array $stripeFactoryNames`) are replaced by a single
+`FluxSE\SyliusStripePlugin\Stripe\SecretKey\LegacyStripePaymentMethodsProviderInterface $legacyStripePaymentMethodsProvider`.
+The shared detection logic now lives in that provider (also consumed by the admin Twig extension).
+
+```diff
+ new LegacyStripeKeyNotificationProvider(
+-    $paymentMethodRepository,
+-    $gatewayFactoryNameProvider,
+-    $legacyKeyDetector,
+-    $stripeFactoryNames,
++    $legacyStripePaymentMethodsProvider,
+ );
+```
+
+**You must migrate if** you instantiate `LegacyStripeKeyNotificationProvider` directly in PHP or via a manual service
+definition that does **not** use the bundled one. Replace the four arguments with `@flux_se.sylius_stripe.stripe.secret_key.legacy_stripe_payment_methods` 
+(or any other `LegacyStripePaymentMethodsProviderInterface` implementation).
+
 [link-sylius-stripe-app]: https://marketplace.stripe.com/apps/install/link/com.sylius.stripe

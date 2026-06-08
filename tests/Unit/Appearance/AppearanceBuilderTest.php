@@ -27,14 +27,14 @@ final class AppearanceBuilderTest extends TestCase
     {
         $result = $this->builder->build(['colorPrimary' => '#ff0000', 'colorText' => '#000000']);
 
-        self::assertSame(['variables' => ['colorPrimary' => '#ff0000', 'colorText' => '#000000']], $result);
+        self::assertSame(['variables' => ['colorPrimary' => '#ff0000', 'colorText' => '#000000'], 'theme' => 'stripe'], $result);
     }
 
     public function test_maps_font_and_border_radius_to_variables(): void
     {
         $result = $this->builder->build(['fontFamily' => 'Arial', 'borderRadius' => '4px']);
 
-        self::assertSame(['variables' => ['fontFamily' => 'Arial', 'borderRadius' => '4px']], $result);
+        self::assertSame(['variables' => ['fontFamily' => 'Arial', 'borderRadius' => '4px'], 'theme' => 'stripe'], $result);
     }
 
     public function test_strips_empty_string_values(): void

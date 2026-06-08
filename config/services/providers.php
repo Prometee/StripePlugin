@@ -14,7 +14,6 @@ use FluxSE\SyliusStripePlugin\Provider\Transition\Checkout\SessionTransitionProv
 use FluxSE\SyliusStripePlugin\Provider\Transition\Checkout\SubscriptionModeTransitionProvider;
 use FluxSE\SyliusStripePlugin\Provider\Transition\WebElements\PaymentIntentTransitionProvider;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
-
 use function Symfony\Component\DependencyInjection\Loader\Configurator\param;
 use function Symfony\Component\DependencyInjection\Loader\Configurator\service;
 use function Symfony\Component\DependencyInjection\Loader\Configurator\tagged_locator;

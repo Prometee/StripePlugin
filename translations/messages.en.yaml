@@ -2,6 +2,11 @@ flux_se_sylius_stripe_plugin:
     admin:
         notification:
             legacy_secret_key: 'Payment method "%payment_method_name%" uses a legacy secret key (sk_…). Switch to a Restricted API Key from the Sylius Stripe App.'
+        payment_method:
+            index:
+                legacy_key_alert: 'Payment method "%payment_method_name%" uses a legacy secret key (sk_…). Switch to a Restricted API Key from the Sylius Stripe App to ensure uninterrupted service.'
+                legacy_key_alert_button: 'Update Key'
+                legacy_key_requires_action: 'Requires Action'
     gateway_factory:
         stripe_checkout: Stripe (Checkout)
         stripe_web_elements: Stripe (Web Elements)
@@ -24,6 +29,7 @@ flux_se_sylius_stripe_plugin:
                 action:
                     open_stripe_app: Open Sylius Stripe App
                     learn_more_restricted_keys: Learn more about restricted API keys
+                    replace_key_badge: Replace the key with a Restricted API Key
                     webhook_secret_key: Create a new webhook endpoint
     stripe_appearance:
         title: Payment form appearance

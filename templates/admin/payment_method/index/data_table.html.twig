@@ -1,0 +1,88 @@
+{% import '@SyliusAdmin/shared/helper/table.html.twig' as table %}
+{% import '@SyliusAdmin/shared/helper/pagination.html.twig' as pagination %}
+{% import '@SyliusAdmin/shared/helper/dropdown.html.twig' as dropdown %}
+
+{% set resources = hookable_metadata.context.resources|default(null) %}
+{% set data = resources.data|default([]) %}
+{% set definition = resources.definition|default(null) %}
+
+{% set legacy_ids = sylius_stripe_legacy_payment_methods()|map(pm => pm.id) %}
+
+{% if data|length > 0 %}
+    <div class="card">
+        <div class="card-body border-bottom py-3">
+            <div class="d-flex">
+                {% if data|length > 0 and definition.actionGroups.bulk is defined and definition.getEnabledActions('bulk')|length > 0 %}
+                    <div class="sylius-grid-nav__bulk grid">
+                        {% for action in definition.getEnabledActions('bulk') %}
+                            {{ sylius_grid_render_bulk_action(resources, action, null) }}
+                        {% endfor %}
+                    </div>
+                {% endif %}
+                <div class="ms-auto">
+                    {{ pagination.number_of_results_selector(data, definition.limits) }}
+                </div>
+            </div>
+        </div>
+        <div class="table-responsive">
+            <table class="table card-table table-vcenter datatable" {{ sylius_test_html_attribute('grid-table') }}>
+                <thead>
+                <tr>
+                    {{ table.headers(resources, resources.definition, app.request.attributes) }}
+                </tr>
+                </thead>
+                <tbody {{ sylius_test_html_attribute('grid-table-body') }}>
+                {% for row in resources.data %}
+                    <tr class="item{% if row.id in legacy_ids %} stripe-legacy-row{% endif %}" {{ sylius_test_html_attribute('row') }} {{ sylius_test_html_attribute('resource-id', row.id|default(null)) }}>
+                        {% if definition.actionGroups.bulk is defined and definition.getEnabledActions('bulk')|length > 0 and row.id is defined %}
+                            <td class="text-center"><input data-check-all-group="index" class="form-check-input" type="checkbox" value="{{ row.id }}" /></td>
+                        {% endif %}
+                        {% for field in definition.enabledFields|sylius_sort_by('position') %}
+                            <td{% if field.options.vars.td_class is defined %} class="{{ field.options.vars.td_class }}"{% endif %}>
+                                {{ sylius_grid_render_field(resources, field, row) }}
+                                {% if field.name == 'gateway' and row.id in legacy_ids %}
+                                    <button type="button" class="stripe-legacy-row-badge btn btn-sm fw-bold p-2 rounded-3 ms-2">
+                                        {{ 'flux_se_sylius_stripe_plugin.admin.payment_method.index.legacy_key_requires_action'|trans }}
+                                    </button>
+                                {% endif %}
+                            </td>
+                        {% endfor %}
+                        {% if definition.actionGroups.item is defined and definition.getEnabledActions('item')|length > 0 %}
+                            <td{% if field.options.vars.td_class is defined %} class="{{ field.options.vars.td_class }}"{% endif %} {{ sylius_test_html_attribute('actions') }}>
+                                <div class="d-flex gap-1 justify-content-end">
+                                    {% for action in definition.getEnabledActions('item')|sylius_sort_by('position') %}
+                                        {{ sylius_grid_render_action(resources, action, row) }}
+                                    {% endfor %}
+                                    {% if definition.actionGroups.subitem is defined and definition.getEnabledActions('subitem')|length > 0 %}
+                                        {% set subactions %}
+                                            {% for action in definition.getEnabledActions('subitem')|sylius_sort_by('position') %}
+                                                {{ sylius_grid_render_action(resources, action, row) }}
+                                            {% endfor %}
+                                        {% endset %}
+                                        {% set more_button %}
+                                            <button class="btn btn-icon dropdown-static" data-bs-toggle="tooltip" data-bs-title="{{ 'sylius.ui.more'|trans }}">
+                                                {{ ux_icon('tabler:dots') }}
+                                            </button>
+                                        {% endset %}
+                                        {% if subactions|trim|length > 0 %}
+                                            {{ dropdown.default({ custom_trigger: more_button, content: subactions, direction: 'down-end' }) }}
+                                        {% endif %}
+                                    {% endif %}
+                                </div>
+                            </td>
+                        {% endif %}
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div class="card-footer d-flex align-items-center gap-2 flex-wrap">
+            <div class="text-muted">
+                {{ pagination.results_count(data) }}
+            </div>
+            <div class="ms-auto">
+                {{ pagination.simple(data) }}
+            </div>
+        </div>
+    </div>
+{% endif %}

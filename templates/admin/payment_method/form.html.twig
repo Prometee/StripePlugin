@@ -1,6 +1,6 @@
 {% set form = hookable_metadata.context.form %}
 
-<h3 class="mt-4 mb-4">{{ ('flux_se_sylius_stripe_plugin.gateway_factory.'~form.gatewayConfig.vars.data.factoryName)|trans }}</h3>
+<h3 id="stripe-gateway-configuration" class="mt-4 mb-4">{{ ('flux_se_sylius_stripe_plugin.gateway_factory.'~form.gatewayConfig.vars.data.factoryName)|trans }}</h3>
 
 <div class="row" {{ sylius_test_html_attribute('config-stripe') }} >
     {% hook 'form' with { form } %}

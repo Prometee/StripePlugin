@@ -1,5 +1,15 @@
 sylius_twig_hooks:
     hooks:
+        'sylius_admin.payment_method.index.content.grid':
+            data_table:
+                template: '@FluxSESyliusStripePlugin/admin/payment_method/index/data_table.html.twig'
+                priority: 100
+
+        'sylius_admin.payment_method.index.content.header':
+            legacy_key_alert:
+                template: '@FluxSESyliusStripePlugin/admin/payment_method/index/legacy_key_alert.html.twig'
+                priority: -100
+
         'sylius_admin.payment_method.create.content': &component
             form:
                 props:
