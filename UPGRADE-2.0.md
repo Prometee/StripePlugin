@@ -1,3 +1,77 @@
+# Bugfix: Order payment state recovery after authorized payment cancellation
+
+## What changed
+
+When an authorized `Payment` transitions to `cancelled` — either because the merchant voids the
+authorization via the Stripe Dashboard, or because an async payment method (e.g. SEPA) fails after
+being processed — the `Order.paymentState` now automatically recovers to `awaiting_payment`,
+allowing the customer to retry payment.
+
+Two bugs were fixed:
+
+1. **`PaymentIntentTransitionProvider::isComplete()`** previously called `isChargeRefunded()` before
+   checking `PaymentIntent.status`. For a cancelled PaymentIntent whose `latest_charge` is not yet
+   a fully-expanded `Charge` object (e.g. right after a `cancel` API call), this caused a
+   `\LogicException`. The status is now checked first; `isChargeRefunded()` is only called when
+   `status === succeeded`.
+
+2. **`SessionTransitionProvider::isCancel()`** previously required `isProcess()` to return `true`
+   as a guard condition. `isProcess()` requires `PaymentIntent.status === processing`, so it was
+   always `false` for a cancelled authorized payment (whose PI status is `canceled`). A fast-path
+   for `session.status === complete` was added so that `isCancel()` now correctly delegates to
+   `sessionModeTransitionProvider->isCancel()` for any completed session, regardless of PI status.
+
+## Impact on custom code
+
+**If you have extended `PaymentIntentTransitionProvider`** and overridden `isComplete()`, reorder
+your check to guard on `STATUS_SUCCEEDED` first:
+
+```php
+// Before (unsafe for non-succeeded PIs):
+public function isComplete(PaymentIntent $paymentIntent): bool
+{
+    if ($this->isChargeRefunded($paymentIntent)) {
+        return false;
+    }
+    return PaymentIntent::STATUS_SUCCEEDED === $paymentIntent->status;
+}
+
+// After:
+public function isComplete(PaymentIntent $paymentIntent): bool
+{
+    if (PaymentIntent::STATUS_SUCCEEDED !== $paymentIntent->status) {
+        return false;
+    }
+    return !$this->isChargeRefunded($paymentIntent);
+}
+```
+
+**If you have extended `SessionTransitionProvider`** and overridden `isCancel()`, add the
+`STATUS_COMPLETE` fast-path before the existing `isProcess()` guard:
+
+```php
+public function isCancel(Session $session): bool
+{
+    if (Session::STATUS_COMPLETE === $session->status) {
+        return $this->sessionModeTransitionProvider->isCancel($session);
+    }
+    if (!$this->isProcess($session)) {
+        return false;
+    }
+    return $this->sessionModeTransitionProvider->isCancel($session);
+}
+```
+
+## Side-effect: async payment failure recovery
+
+As a positive side-effect, orders whose async payment (e.g. SEPA bank transfer) fails after
+entering `processing` state now also recover to `awaiting_payment` instead of being stuck.
+Previously no state transition was applied on `checkout.session.async_payment_failed`, leaving the
+order in an inconsistent state. If your application contains workarounds for this case, they can
+now be removed.
+
+---
+
 # Upgrade from 1.0 to 2.0
 
 ## Stripe PHP SDK upgrade
