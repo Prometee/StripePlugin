@@ -18,8 +18,13 @@ final class StripeClientWithExpectations implements StripeClientWithExpectations
     ) {
     }
 
-    public function addExpectation(string $method, string $absUrl, array $body, bool $mergeParams = false): void
-    {
+    public function addExpectation(
+        string $method,
+        string $absUrl,
+        array $body,
+        bool $mergeParams = false,
+        int $statusCode = 200,
+    ): void {
         $cacheItem = $this->getCacheItem();
         $expectations = $this->getExpectations();
         $expectations[] = [
@@ -27,6 +32,7 @@ final class StripeClientWithExpectations implements StripeClientWithExpectations
             'absUrl' => $absUrl,
             'body' => $body,
             'mergeParams' => $mergeParams,
+            'statusCode' => $statusCode,
         ];
         $cacheItem->set($expectations);
         $this->cache->save($cacheItem);
@@ -49,6 +55,7 @@ final class StripeClientWithExpectations implements StripeClientWithExpectations
          *  absUrl: string,
          *  body: array<string, string|array<string, string>>,
          *  mergeParams: bool,
+         *  statusCode: int,
          * }> $expectations */
         $expectations = $this->getCacheItem()->get();
 
@@ -97,7 +104,7 @@ final class StripeClientWithExpectations implements StripeClientWithExpectations
 
         return [
             json_encode($body, \JSON_THROW_ON_ERROR),
-            200,
+            $expectation['statusCode'],
             [],
         ];
     }

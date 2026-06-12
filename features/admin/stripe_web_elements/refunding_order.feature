@@ -23,3 +23,17 @@ Feature: Refunding an order with Stripe JS
         Then I should be notified that the order's payment has been successfully refunded
         And it should have payment with state refunded
         And it should have payment state "Refunded"
+
+    @api @ui
+    Scenario Outline: Gracefully handling a refund rejected on the Stripe side
+        Given I am viewing the summary of this order
+        And I am prepared to refund this order, but Stripe will reject the refund because the charge was <reason>
+        When I mark this order's payment as refunded
+        Then I should be notified that the order's payment has been successfully refunded
+        And it should have payment with state refunded
+        And it should have payment state "Refunded"
+
+        Examples:
+            | reason           |
+            | already refunded |
+            | charged back     |

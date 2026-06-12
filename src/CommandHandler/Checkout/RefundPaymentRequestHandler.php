@@ -10,6 +10,8 @@ use FluxSE\SyliusStripePlugin\Manager\Checkout\RetrieveManagerInterface;
 use FluxSE\SyliusStripePlugin\Manager\Refund\CreateManagerInterface;
 use FluxSE\SyliusStripePlugin\Processor\PaymentTransitionProcessorInterface;
 use FluxSE\SyliusStripePlugin\Provider\Refund\PaymentIntentToRefundProviderInterface;
+use Stripe\ErrorObject;
+use Stripe\Exception\InvalidRequestException;
 use Stripe\PaymentIntent;
 use Sylius\Abstraction\StateMachine\StateMachineInterface;
 use Sylius\Bundle\PaymentBundle\Provider\PaymentRequestProviderInterface;
@@ -21,6 +23,12 @@ use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 final readonly class RefundPaymentRequestHandler
 {
     use FailedAwarePaymentRequestHandlerTrait;
+
+    /** @var list<string> Stripe error codes for which a refund is rejected because it was already settled against the customer */
+    private const IGNORABLE_REFUND_REJECTION_CODES = [
+        ErrorObject::CODE_CHARGE_ALREADY_REFUNDED,
+        ErrorObject::CODE_CHARGE_DISPUTED,
+    ];
 
     public function __construct(
         private PaymentRequestProviderInterface $paymentRequestProvider,
@@ -93,7 +101,21 @@ final readonly class RefundPaymentRequestHandler
             'amount' => $refundPaymentRequest->getAmount(),
         ]);
 
-        $refund = $this->createRefundManager->create($paymentRequest);
+        try {
+            $refund = $this->createRefundManager->create($paymentRequest);
+        } catch (InvalidRequestException $exception) {
+            // Only treat refunds that Stripe rejects because the money has already left the merchant
+            // (the charge was fully refunded or charged back) as a graceful failure. Any other invalid request is
+            // a real problem and must bubble up instead of silently closing the refund on the Sylius side.
+            if (!in_array($exception->getStripeCode(), self::IGNORABLE_REFUND_REJECTION_CODES, true)) {
+                throw $exception;
+            }
+
+            $this->failWithReason($paymentRequest, $exception->getMessage());
+
+            return;
+        }
+
         $session = $this->retrieveCheckoutManager->retrieve($paymentRequest, $id);
 
         $paymentRequest->setResponseData($refund->toArray());

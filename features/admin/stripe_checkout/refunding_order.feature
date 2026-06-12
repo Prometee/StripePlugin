@@ -25,6 +25,21 @@ Feature: Refunding an order with Stripe Checkout Session
         And it should have payment state "Refunded"
 
     @api @ui
+    Scenario Outline: Gracefully handling a Stripe Checkout Session refund rejected on the Stripe side
+        Given this order is already paid using Stripe Checkout
+        And I am viewing the summary of this order
+        And I am prepared to refund this order, but Stripe will reject the refund because the charge was <reason>
+        When I mark this order's payment as refunded
+        Then I should be notified that the order's payment has been successfully refunded
+        And it should have payment with state refunded
+        And it should have payment state "Refunded"
+
+        Examples:
+            | reason           |
+            | already refunded |
+            | charged back     |
+
+    @api @ui
     Scenario: Initializing the Stripe refund for a Stripe Checkout Session mode subscription
         Given this order related to a subscription is already paid using Stripe Checkout
         And I am viewing the summary of this order
