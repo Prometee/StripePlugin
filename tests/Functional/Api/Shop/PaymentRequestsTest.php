@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\FluxSE\SyliusStripePlugin\Functional\Api\Shop;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use Sylius\Component\Core\Model\OrderInterface;
 use Sylius\Component\Core\Model\PaymentInterface;
 use Sylius\Component\Core\Model\PaymentMethodInterface;
@@ -26,12 +27,11 @@ final class PaymentRequestsTest extends JsonApiTestCase
     }
 
     /**
-     * @dataProvider createPaymentRequestProvider
-     *
      * @param string[] $fixturesPaths
      *
      * @throws \JsonException
      */
+    #[DataProvider('createPaymentRequestProvider')]
     public function test_it_creates_a_payment_request(string $method, array $fixturesPaths, string $responsePath): void
     {
         $fixtures = $this->loadFixturesFromFiles($fixturesPaths);
@@ -73,12 +73,11 @@ final class PaymentRequestsTest extends JsonApiTestCase
     }
 
     /**
-     * @dataProvider createPaymentRequestProviderWithError
-     *
      * @param string[] $fixturesPaths
      *
      * @throws \JsonException
      */
+    #[DataProvider('createPaymentRequestProviderWithError')]
     public function test_it_does_not_create_a_payment_request_without_required_data(string $method, array $fixturesPaths, string $responsePath): void
     {
         $fixtures = $this->loadFixturesFromFiles($fixturesPaths);

@@ -27,6 +27,7 @@ final readonly class PaymentStateProcessor implements PaymentStateProcessorInter
         private PaymentRequestFactoryInterface $paymentRequestFactory,
         private PaymentRequestRepositoryInterface $paymentRequestRepository,
         private PaymentRequestAnnouncerInterface $paymentRequestAnnouncer,
+        private StripeStateAppliedCheckerInterface $stripeStateAppliedChecker,
         private array $supportedFactories,
         private array $allowedPaymentFromStates,
         private string $requiredPaymentState,
@@ -65,6 +66,10 @@ final readonly class PaymentStateProcessor implements PaymentStateProcessorInter
                 $payment->getState(),
             ),
         );
+
+        if ($this->stripeStateAppliedChecker->isAlreadyApplied($payment, $this->paymentRequestAction)) {
+            return;
+        }
 
         $paymentRequest = $this->paymentRequestRepository->findOneByActionPaymentAndMethod(
             $this->paymentRequestAction,

@@ -1,0 +1,3 @@
+{% set gateway_type = hookable_metadata.context.form.vars.data.gatewayConfig.factoryName %}
+
+{% hook 'stripe_appearance.' ~ gateway_type %}

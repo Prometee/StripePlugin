@@ -1,0 +1,57 @@
+<div class="d-flex align-items-center gap-2 mb-4 stripe-variables-toggle collapsed"
+     role="button"
+     data-bs-toggle="collapse"
+     data-bs-target="#stripe-appearance-variables"
+     aria-expanded="false"
+     aria-controls="stripe-appearance-variables">
+    <span class="fw-bold">{{ 'flux_se_sylius_stripe_plugin.stripe_appearance.commonly_used_variables'|trans }}</span>
+    {{ ux_icon('tabler:chevron-right', {'class': 'icon'}) }}
+</div>
+<div class="collapse mb-6" id="stripe-appearance-variables">
+    <div class="col-12 col-xl-7 px-0">
+        <div class="stripe-variables-list bg-white rounded-3 p-3">
+            <table class="table table-sm table-striped mb-0">
+                <thead>
+                    <tr>
+                        <th class="fw-bold ps-4">{{ 'flux_se_sylius_stripe_plugin.stripe_appearance.variables_table.variable'|trans }}</th>
+                        <th class="fw-bold ps-4">{{ 'flux_se_sylius_stripe_plugin.stripe_appearance.variables_table.description'|trans }}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="py-2 ps-3"><code class="fw-medium text-primary rounded-1">fontFamily</code></td>
+                        <td class="py-2 ps-3">{{ 'flux_se_sylius_stripe_plugin.stripe_appearance.variables_table.font_family'|trans|raw }}</td>
+                    </tr>
+                    <tr>
+                        <td class="py-2 ps-3"><code class="fw-medium text-primary rounded-1">fontSizeBase</code></td>
+                        <td class="py-2 ps-3">{{ 'flux_se_sylius_stripe_plugin.stripe_appearance.variables_table.font_size_base'|trans|raw }}</td>
+                    </tr>
+                    <tr>
+                        <td class="py-2 ps-3"><code class="fw-medium text-primary rounded-1">spacingUnit</code></td>
+                        <td class="py-2 ps-3">{{ 'flux_se_sylius_stripe_plugin.stripe_appearance.variables_table.spacing_unit'|trans }}</td>
+                    </tr>
+                    <tr>
+                        <td class="py-2 ps-3"><code class="fw-medium text-primary rounded-1">borderRadius</code></td>
+                        <td class="py-2 ps-3">{{ 'flux_se_sylius_stripe_plugin.stripe_appearance.variables_table.border_radius'|trans }}</td>
+                    </tr>
+                    <tr>
+                        <td class="py-2 ps-3"><code class="fw-medium text-primary rounded-1">colorPrimary</code></td>
+                        <td class="py-2 ps-3">{{ 'flux_se_sylius_stripe_plugin.stripe_appearance.variables_table.color_primary'|trans }}</td>
+                    </tr>
+                    <tr>
+                        <td class="py-2 ps-3"><code class="fw-medium text-primary rounded-1">colorBackground</code></td>
+                        <td class="py-2 ps-3">{{ 'flux_se_sylius_stripe_plugin.stripe_appearance.variables_table.color_background'|trans }}</td>
+                    </tr>
+                    <tr>
+                        <td class="py-2 ps-3"><code class="fw-medium text-primary rounded-1">colorText</code></td>
+                        <td class="py-2 ps-3">{{ 'flux_se_sylius_stripe_plugin.stripe_appearance.variables_table.color_text'|trans }}</td>
+                    </tr>
+                    <tr>
+                        <td class="py-2 ps-3"><code class="fw-medium text-primary rounded-1">colorDanger</code></td>
+                        <td class="py-2 ps-3">{{ 'flux_se_sylius_stripe_plugin.stripe_appearance.variables_table.color_danger'|trans }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
