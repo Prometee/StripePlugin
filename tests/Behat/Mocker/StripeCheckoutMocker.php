@@ -82,6 +82,24 @@ class StripeCheckoutMocker
         ]);
     }
 
+    public function mockRefundPaymentRejectedByStripe(int $amount, string $message, string $code): void
+    {
+        $this->checkoutSessionMocker->mockRetrieveAction([
+            'mode' => Session::MODE_PAYMENT,
+            'status' => Session::STATUS_COMPLETE,
+            'payment_status' => Session::PAYMENT_STATUS_PAID,
+            'amount_total' => $amount,
+            PaymentIntent::OBJECT_NAME => [
+                'id' => 'pi_test_1',
+                'object' => PaymentIntent::OBJECT_NAME,
+                'status' => PaymentIntent::STATUS_SUCCEEDED,
+                'capture_method' => PaymentIntent::CAPTURE_METHOD_AUTOMATIC,
+            ],
+        ]);
+
+        $this->refundMocker->mockCreateActionWithError($message, $code);
+    }
+
     public function mockRefundSubscription(int $amount): void
     {
         $subscriptionData = [

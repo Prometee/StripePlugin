@@ -15,9 +15,15 @@ interface StripeClientWithExpectationsInterface extends ClientInterface
     public const CACHE_KEY = 'stripe_client_expectations';
 
     /**
-     * @param array<key-of<T>, mixed> $body
+     * @param array<key-of<T>, mixed>|array{error: array<string, mixed>} $body
      */
-    public function addExpectation(string $method, string $absUrl, array $body, bool $mergeParams = false): void;
+    public function addExpectation(
+        string $method,
+        string $absUrl,
+        array $body,
+        bool $mergeParams = false,
+        int $statusCode = 200,
+    ): void;
 
     public function hasExpectations(): bool;
 
@@ -27,6 +33,7 @@ interface StripeClientWithExpectationsInterface extends ClientInterface
      *      absUrl: string,
      *      body: array<string, string|array<string, string>>,
      *      mergeParams: bool,
+     *      statusCode: int,
      *  }>
      */
     public function getExpectations(): array;

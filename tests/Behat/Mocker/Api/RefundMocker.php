@@ -31,6 +31,23 @@ class RefundMocker
         );
     }
 
+    public function mockCreateActionWithError(string $message, string $code): void
+    {
+        $this->stripeClientWithExpectations->addExpectation(
+            'post',
+            $this->getRefundBaseUrl(),
+            [
+                'error' => [
+                    'type' => 'invalid_request_error',
+                    'code' => $code,
+                    'message' => $message,
+                ],
+            ],
+            false,
+            400,
+        );
+    }
+
     private function getRefundBaseUrl(): string
     {
         return Stripe::$apiBase . Refund::classUrl();

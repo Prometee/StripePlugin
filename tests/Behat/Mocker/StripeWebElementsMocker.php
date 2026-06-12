@@ -59,6 +59,17 @@ final class StripeWebElementsMocker
         ]);
     }
 
+    public function mockRefundPaymentRejectedByStripe(int $amount, string $message, string $code): void
+    {
+        $this->paymentIntentMocker->mockRetrieveAction([
+            'status' => PaymentIntent::STATUS_SUCCEEDED,
+            'capture_method' => PaymentIntent::CAPTURE_METHOD_AUTOMATIC,
+            'amount' => $amount,
+        ]);
+
+        $this->refundMocker->mockCreateActionWithError($message, $code);
+    }
+
     public function mockCompleteAuthorized(string $status, string $captureMethod): void
     {
         $this->paymentIntentMocker->mockRetrieveAction([

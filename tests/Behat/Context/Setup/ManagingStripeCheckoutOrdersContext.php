@@ -272,6 +272,24 @@ class ManagingStripeCheckoutOrdersContext implements ManagingStripeOrdersContext
     }
 
     /**
+     * @Given /^I am prepared to refund (this order), but Stripe will reject the refund because the charge was (already refunded|charged back)$/
+     */
+    public function iAmPreparedToRefundThisOrderRejectedByStripe(OrderInterface $order, string $reason): void
+    {
+        /** @var PaymentInterface $payment */
+        $payment = $order->getLastPayment(BasePaymentInterface::STATE_COMPLETED);
+
+        $amount = $payment->getAmount();
+        if (null === $amount) {
+            return;
+        }
+
+        [$message, $code] = StripeRefundRejection::forReason($reason);
+
+        $this->stripeCheckoutSessionMocker->mockRefundPaymentRejectedByStripe($amount, $message, $code);
+    }
+
+    /**
      * @Given /^I am prepared to refund (this order) related to a subscription$/
      */
     public function iAmPreparedToRefundThisOrderRelatedToASubscription(OrderInterface $order): void
