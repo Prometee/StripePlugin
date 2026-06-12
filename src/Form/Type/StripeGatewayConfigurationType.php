@@ -87,15 +87,9 @@ final class StripeGatewayConfigurationType extends AbstractType
                 'button_delete_options' => [
                     'label' => 'sylius.ui.delete',
                     'translation_domain' => 'messages',
-                    'attr' => [
-                        'class' => 'btn btn-danger',
-                    ],
                 ],
                 'button_add_options' => [
                     'label' => 'sylius.ui.add',
-                    'attr' => [
-                        'class' => 'btn btn-primary',
-                    ],
                 ],
                 'error_bubbling' => false,
                 'constraints' => [
