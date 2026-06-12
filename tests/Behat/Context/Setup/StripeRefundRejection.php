@@ -4,15 +4,9 @@ declare(strict_types=1);
 
 namespace Tests\FluxSE\SyliusStripePlugin\Behat\Context\Setup;
 
-/**
- * Maps a human-readable rejection reason (used in Behat steps) to the matching
- * Stripe error message and code returned by the mocked Refund create endpoint.
- */
 final class StripeRefundRejection
 {
-    /**
-     * @return array{0: string, 1: string} message and Stripe error code
-     */
+    /** @return array{0: string, 1: string} message and Stripe error code */
     public static function forReason(string $reason): array
     {
         return match ($reason) {

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\FluxSE\SyliusStripePlugin\Behat\Context\Setup;
 
+use Behat\Step\Given;
 use Doctrine\Persistence\ObjectManager;
 use Stripe\Checkout\Session;
 use Stripe\Invoice;
@@ -271,9 +272,7 @@ class ManagingStripeCheckoutOrdersContext implements ManagingStripeOrdersContext
         $this->stripeCheckoutSessionMocker->mockRefundPayment($amount);
     }
 
-    /**
-     * @Given /^I am prepared to refund (this order), but Stripe will reject the refund because the charge was (already refunded|charged back)$/
-     */
+    #[Given('/^I am prepared to refund (this order), but Stripe will reject the refund because the charge was (already refunded|charged back)$/')]
     public function iAmPreparedToRefundThisOrderRejectedByStripe(OrderInterface $order, string $reason): void
     {
         /** @var PaymentInterface $payment */
