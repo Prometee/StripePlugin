@@ -6,3 +6,13 @@
         {{- translation_domain is same as(false) ? label : label|trans(label_translation_parameters, translation_domain) -}}
     </button>
 {%- endblock -%}
+
+{%- block live_collection_button_add_widget -%}
+    {%- set attr = attr|merge({'class': (attr.class|default('') ~ ' btn btn-primary')|trim}) -%}
+    {{- block('button_widget') -}}
+{%- endblock -%}
+
+{%- block live_collection_button_delete_widget -%}
+    {%- set attr = attr|merge({'class': (attr.class|default('') ~ ' btn btn-danger')|trim}) -%}
+    {{- block('button_widget') -}}
+{%- endblock -%}
