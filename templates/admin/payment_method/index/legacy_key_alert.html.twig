@@ -3,7 +3,7 @@
     <div class="alert alert-warning stripe-legacy-key-alert d-inline-flex flex-column flex-md-row px-3 py-3 my-2 align-items-start align-items-md-center" {{ sylius_test_html_attribute('legacy-key-alert') }}>
         <div class="me-2">{{ ux_icon('tabler:alert-triangle', {'class': 'icon alert-icon'}) }}</div>
         <div class="fw-medium fs-3 me-4">
-            {{ 'flux_se_sylius_stripe_plugin.admin.payment_method.index.legacy_key_alert'|trans({'%payment_method_name%': payment_method.name})|raw }}
+            {{ 'flux_se_sylius_stripe_plugin.admin.payment_method.index.legacy_key_alert'|trans({'%payment_method_name%': payment_method.name|e('html')})|raw }}
         </div>
         <a href="{{ path('sylius_admin_payment_method_update', {'id': payment_method.id}) }}#stripe-gateway-configuration" class="btn btn-warning fw-bold fs-3 py-2 px-4 rounded-3 mt-2 mt-md-0 ms-md-auto">
             {{ 'flux_se_sylius_stripe_plugin.admin.payment_method.index.legacy_key_alert_button'|trans }}
