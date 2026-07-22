@@ -62,6 +62,31 @@ final class CheckoutSidebarExpressCheckoutTest extends WebTestCase
         self::assertStringContainsString('data-sylius-stripe-express-checkout-mount', $content);
     }
 
+    public function test_it_does_not_render_express_checkout_button_when_no_payment_method_supports_it(): void
+    {
+        $fixtures = $this->loadFixtures([
+            'channel.yaml',
+            'tax_category.yaml',
+            'shipping_category.yaml',
+            'product_variant.yaml',
+            'express_checkout/payment_method_disabled.yaml',
+            'express_checkout/cart_ready.yaml',
+        ]);
+
+        /** @var OrderInterface $cart */
+        $cart = $fixtures['cart_ready'];
+        $this->startCartSession($cart);
+
+        $this->client->request('GET', '/en_US/checkout/address');
+
+        $response = $this->client->getResponse();
+        self::assertSame(Response::HTTP_OK, $response->getStatusCode());
+
+        $content = (string) $response->getContent();
+        self::assertStringNotContainsString('data-sylius-stripe-express-checkout-checkout', $content);
+        self::assertStringNotContainsString('data-sylius-stripe-express-checkout-mount', $content);
+    }
+
     private function startCartSession(OrderInterface $cart): void
     {
         /** @var SessionFactoryInterface $sessionFactory */

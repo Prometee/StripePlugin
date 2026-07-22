@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 use FluxSE\SyliusStripePlugin\ExpressCheckout\ConfigurationProvider;
 use FluxSE\SyliusStripePlugin\ExpressCheckout\ConfigurationProviderInterface;
+use FluxSE\SyliusStripePlugin\ExpressCheckout\ExpressCheckoutAvailabilityChecker;
+use FluxSE\SyliusStripePlugin\ExpressCheckout\ExpressCheckoutAvailabilityCheckerInterface;
 use FluxSE\SyliusStripePlugin\ExpressCheckout\OrderCompleter;
 use FluxSE\SyliusStripePlugin\ExpressCheckout\OrderCompleterInterface;
 use FluxSE\SyliusStripePlugin\ExpressCheckout\Payload\ExpressCheckoutPayloadReader;
@@ -15,7 +17,6 @@ use FluxSE\SyliusStripePlugin\ExpressCheckout\Shipping\ShippingRateAssemblerInte
 use FluxSE\SyliusStripePlugin\ExpressCheckout\ShippingOptionsCalculator;
 use FluxSE\SyliusStripePlugin\ExpressCheckout\ShippingOptionsCalculatorInterface;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
-
 use function Symfony\Component\DependencyInjection\Loader\Configurator\service;
 
 return static function (ContainerConfigurator $container): void {
@@ -45,6 +46,13 @@ return static function (ContainerConfigurator $container): void {
             service('flux_se.sylius_stripe.resolver.express_checkout_payment_method'),
         ]);
     $services->alias(ConfigurationProviderInterface::class, 'flux_se.sylius_stripe.shop.express_checkout.configuration_provider');
+
+    $services->set('flux_se.sylius_stripe.shop.express_checkout.availability_checker', ExpressCheckoutAvailabilityChecker::class)
+        ->args([
+            service('sylius.context.channel'),
+            service('flux_se.sylius_stripe.resolver.express_checkout_payment_method'),
+        ]);
+    $services->alias(ExpressCheckoutAvailabilityCheckerInterface::class, 'flux_se.sylius_stripe.shop.express_checkout.availability_checker');
 
     $services->set('flux_se.sylius_stripe.shop.express_checkout.shipping_options_calculator', ShippingOptionsCalculator::class)
         ->args([
