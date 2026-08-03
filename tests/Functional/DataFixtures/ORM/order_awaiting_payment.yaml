@@ -4,6 +4,7 @@ Sylius\Component\Core\Model\Order:
         currencyCode: "USD"
         localeCode: "en_US"
         state: "new"
+        checkoutState: "completed"
         paymentState: "awaiting_payment"
         shippingState: "ready"
         number: "000000001"

@@ -1,6 +1,6 @@
 {# Rendered by \Sylius\Bundle\AdminBundle\TwigComponent\Shared\Navbar\NotificationsComponent #}
 
-{% if notifications_enabled %}
+{% if notifications_enabled ?? true %}
     {% import '@SyliusAdmin/shared/helper/dropdown.html.twig' as dropdown %}
 
     <div class="nav-item" data-test-notifications-icon>
