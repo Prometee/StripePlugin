@@ -130,7 +130,7 @@ final class ConfirmActionTest extends WebTestCase
         $token = $this->bootSession($cart);
 
         // Stripe API call (PaymentIntent::create) is intercepted by
-        // StripeClientWithExpectations decorator (already wired through Behat services.xml
+        // StripeClientWithExpectations decorator (already wired through Behat services.php
         // which TestApplication imports for the test env). PaymentIntentMocker primes the
         // canned response with `client_secret: '1234567890'`.
         $this->getPaymentIntentMocker()->mockCreateAction();
