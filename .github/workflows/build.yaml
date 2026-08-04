@@ -22,9 +22,6 @@ jobs:
                 symfony: [ "^6.4", "^7.4" ]
                 sylius: [ "~2.2.0" ]
 
-                include:
-                    -   { php: "8.3", symfony: "^7.4", sylius: "~2.1.0" }
-
         steps:
             -
                 uses: actions/checkout@v4
@@ -108,9 +105,6 @@ jobs:
                 sylius: [ "~2.2.0" ]
                 node: ["20.x"]
                 mysql: ["8.0"]
-
-                include:
-                    -   { php: "8.3", symfony: "^7.4", sylius: "~2.1.0", node: "20.x", mysql: "8.0" }
 
         env:
             APP_ENV: test
