@@ -5,13 +5,17 @@ declare(strict_types=1);
 namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
 use Sylius\Behat\Client\ResponseCheckerInterface;
-use Sylius\Behat\Context\Ui\Admin\ManagingPaymentMethodsContext;
+use Sylius\Behat\Context\Ui\Admin\ManagingPaymentMethodsContext as SyliusManagingPaymentMethodsContext;
+use Tests\FluxSE\SyliusStripePlugin\Behat\Context\Api\Admin\ManagingPaymentMethodsContext as ApiAdminManagingPaymentMethodsContext;
+use Tests\FluxSE\SyliusStripePlugin\Behat\Context\Api\Shop\StripeCheckoutContext as ApiShopStripeCheckoutContext;
+use Tests\FluxSE\SyliusStripePlugin\Behat\Context\Api\Shop\StripeWebElementsContext as ApiShopStripeWebElementsContext;
 use Tests\FluxSE\SyliusStripePlugin\Behat\Context\Hook\StripeClientWithExpectationsContext;
 use Tests\FluxSE\SyliusStripePlugin\Behat\Context\Setup\ManagingStripeCheckoutOrdersContext;
 use Tests\FluxSE\SyliusStripePlugin\Behat\Context\Setup\ManagingStripeWebElementsOrdersContext;
 use Tests\FluxSE\SyliusStripePlugin\Behat\Context\Setup\StripeContext;
-use Tests\FluxSE\SyliusStripePlugin\Behat\Context\Ui\Shop\StripeCheckoutContext;
-use Tests\FluxSE\SyliusStripePlugin\Behat\Context\Ui\Shop\StripeWebElementsContext;
+use Tests\FluxSE\SyliusStripePlugin\Behat\Context\Ui\Admin\ManagingPaymentMethodsContext as UiAdminManagingPaymentMethodsContext;
+use Tests\FluxSE\SyliusStripePlugin\Behat\Context\Ui\Shop\StripeCheckoutContext as UiShopStripeCheckoutContext;
+use Tests\FluxSE\SyliusStripePlugin\Behat\Context\Ui\Shop\StripeWebElementsContext as UiShopStripeWebElementsContext;
 use Tests\FluxSE\SyliusStripePlugin\Behat\Mocker\StripeCheckoutMocker;
 use Tests\FluxSE\SyliusStripePlugin\Behat\Mocker\StripeWebElementsMocker;
 
@@ -24,7 +28,7 @@ return static function (ContainerConfigurator $container) {
     $services->set('tests.flux_se.sylius_stripe_plugin.behat.context.hook.stripe_client_with_expectations', StripeClientWithExpectationsContext::class)
         ->args([service('tests.flux_se.sylius_stripe.stripe.http_client')]);
 
-    $services->set('tests.flux_se.sylius_stripe_plugin.behat.context.ui.admin.managing_payment_methods.stripe', ManagingPaymentMethodsContext::class)
+    $services->set('tests.flux_se.sylius_stripe_plugin.behat.context.ui.admin.managing_payment_methods.stripe', SyliusManagingPaymentMethodsContext::class)
         ->args([
             service('sylius.behat.page.admin.payment_method.create'),
             service('sylius.behat.page.admin.payment_method.index'),
@@ -41,10 +45,10 @@ return static function (ContainerConfigurator $container) {
             service('sylius.manager.payment_method'),
         ]);
 
-    $services->set('tests.flux_se.sylius_stripe_plugin.behat.context.api.admin.managing_payment_methods', \Tests\FluxSE\SyliusStripePlugin\Behat\Context\Api\Admin\ManagingPaymentMethodsContext::class)
+    $services->set('tests.flux_se.sylius_stripe_plugin.behat.context.api.admin.managing_payment_methods', ApiAdminManagingPaymentMethodsContext::class)
         ->args([service('sylius.behat.api_platform_client.admin')]);
 
-    $services->set('tests.flux_se.sylius_stripe_plugin.behat.context.ui.admin.managing_payment_methods', \Tests\FluxSE\SyliusStripePlugin\Behat\Context\Ui\Admin\ManagingPaymentMethodsContext::class)
+    $services->set('tests.flux_se.sylius_stripe_plugin.behat.context.ui.admin.managing_payment_methods', UiAdminManagingPaymentMethodsContext::class)
         ->args([service('tests.flux_se.sylius_stripe_plugin.behat.page.admin.payment_method.create')]);
 
     $services->set('tests.flux_se.sylius_stripe_plugin.behat.context.setup.managing_orders.stripe_checkout', ManagingStripeCheckoutOrdersContext::class)
@@ -61,7 +65,7 @@ return static function (ContainerConfigurator $container) {
             service(StripeWebElementsMocker::class),
         ]);
 
-    $services->set('tests.flux_se.sylius_stripe_plugin.behat.context.ui.shop.stripe_checkout', StripeCheckoutContext::class)
+    $services->set('tests.flux_se.sylius_stripe_plugin.behat.context.ui.shop.stripe_checkout', UiShopStripeCheckoutContext::class)
         ->args([
             service(StripeCheckoutMocker::class),
             service('sylius.behat.page.shop.checkout.complete'),
@@ -69,7 +73,7 @@ return static function (ContainerConfigurator $container) {
             service('tests.flux_se.sylius_stripe_plugin.behat.page.external.stripe_checkout_session'),
         ]);
 
-    $services->set('tests.flux_se.sylius_stripe_plugin.behat.context.ui.shop.stripe_web_elements', StripeWebElementsContext::class)
+    $services->set('tests.flux_se.sylius_stripe_plugin.behat.context.ui.shop.stripe_web_elements', UiShopStripeWebElementsContext::class)
         ->args([
             service(StripeWebElementsMocker::class),
             service('sylius.behat.page.shop.checkout.complete'),
@@ -77,7 +81,7 @@ return static function (ContainerConfigurator $container) {
             service('tests.flux_se.sylius_stripe_plugin.behat.page.external.stripe_web_elements'),
         ]);
 
-    $services->set('tests.flux_se.sylius_stripe_plugin.behat.context.api.shop.stripe_checkout', \Tests\FluxSE\SyliusStripePlugin\Behat\Context\Api\Shop\StripeCheckoutContext::class)
+    $services->set('tests.flux_se.sylius_stripe_plugin.behat.context.api.shop.stripe_checkout', ApiShopStripeCheckoutContext::class)
         ->args([
             service('sylius.behat.shared_storage'),
             service('sylius.behat.context.api.shop.checkout'),
@@ -88,7 +92,7 @@ return static function (ContainerConfigurator $container) {
             service(ResponseCheckerInterface::class),
         ]);
 
-    $services->set('tests.flux_se.sylius_stripe_plugin.behat.context.api.shop.stripe_web_elements', \Tests\FluxSE\SyliusStripePlugin\Behat\Context\Api\Shop\StripeWebElementsContext::class)
+    $services->set('tests.flux_se.sylius_stripe_plugin.behat.context.api.shop.stripe_web_elements', ApiShopStripeWebElementsContext::class)
         ->args([
             service('sylius.behat.shared_storage'),
             service('sylius.behat.context.api.shop.checkout'),
