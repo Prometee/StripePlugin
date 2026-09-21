@@ -13,7 +13,6 @@ parameters:
         - src
         - tests/
     excludePaths:
-        - tests/Application
         - tests/Functional/Api/JsonApiTestCase.php
 
     ignoreErrors:
