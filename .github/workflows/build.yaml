@@ -18,13 +18,16 @@ jobs:
         strategy:
             fail-fast: false
             matrix:
-                # Symfony ^6.4 and Sylius ~2.2.0 are intentionally absent:
-                #  * the Behat 4 toolchain this branch migrated to (friends-of-behat/mink-extension 3.0.0-alpha1,
-                #    friends-of-behat/symfony-extension ^2.7) requires symfony/config and symfony/dependency-injection
-                #    ^7.4 || ^8.0, so a ^6.4 job cannot even resolve its dependencies;
-                #  * Sylius 2.3 changed Sylius\Bundle\PaymentBundle\Provider\HttpResponseProviderInterface from
-                #    RequestConfiguration to Symfony's Request, and src/OrderPay/Provider/*/CaptureHttpResponseProvider
-                #    now implements the new signature, which is a fatal error on 2.2.
+                # Symfony ^6.4 is intentionally absent: sylius/test-application v2.3.0-ALPHA.1 ships
+                # config/packages/property_info.yaml with framework.property_info.with_constructor_extractor, an option
+                # Symfony only knows from 7.1 on, so the test application cannot boot on 6.4. SyliusCoreExtension
+                # already guards the same option by kernel version; once the test application does too, ^6.4 can come
+                # back — the rest of the stack resolves and runs there.
+                # Sylius ~2.2.0 is intentionally absent: 2.3 changed
+                # Sylius\Bundle\PaymentBundle\Provider\HttpResponseProviderInterface from RequestConfiguration to
+                # Symfony's Request, and src/OrderPay/Provider/*/CaptureHttpResponseProvider now implements the new
+                # signature, which is a fatal error on 2.2.
+                # ^7.4 resolves the Behat 3 toolchain and ^8.0 the Behat 4 one, so both are exercised.
                 php: [ "8.4", "8.5" ]
                 symfony: [ "^7.4", "^8.0" ]
                 sylius: [ "~2.3.0" ]
@@ -107,13 +110,16 @@ jobs:
         strategy:
             fail-fast: false
             matrix:
-                # Symfony ^6.4 and Sylius ~2.2.0 are intentionally absent:
-                #  * the Behat 4 toolchain this branch migrated to (friends-of-behat/mink-extension 3.0.0-alpha1,
-                #    friends-of-behat/symfony-extension ^2.7) requires symfony/config and symfony/dependency-injection
-                #    ^7.4 || ^8.0, so a ^6.4 job cannot even resolve its dependencies;
-                #  * Sylius 2.3 changed Sylius\Bundle\PaymentBundle\Provider\HttpResponseProviderInterface from
-                #    RequestConfiguration to Symfony's Request, and src/OrderPay/Provider/*/CaptureHttpResponseProvider
-                #    now implements the new signature, which is a fatal error on 2.2.
+                # Symfony ^6.4 is intentionally absent: sylius/test-application v2.3.0-ALPHA.1 ships
+                # config/packages/property_info.yaml with framework.property_info.with_constructor_extractor, an option
+                # Symfony only knows from 7.1 on, so the test application cannot boot on 6.4. SyliusCoreExtension
+                # already guards the same option by kernel version; once the test application does too, ^6.4 can come
+                # back — the rest of the stack resolves and runs there.
+                # Sylius ~2.2.0 is intentionally absent: 2.3 changed
+                # Sylius\Bundle\PaymentBundle\Provider\HttpResponseProviderInterface from RequestConfiguration to
+                # Symfony's Request, and src/OrderPay/Provider/*/CaptureHttpResponseProvider now implements the new
+                # signature, which is a fatal error on 2.2.
+                # ^7.4 resolves the Behat 3 toolchain and ^8.0 the Behat 4 one, so both are exercised.
                 php: [ "8.4", "8.5" ]
                 symfony: [ "^7.4", "^8.0" ]
                 sylius: [ "~2.3.0" ]
