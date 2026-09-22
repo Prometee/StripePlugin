@@ -28,12 +28,6 @@ jobs:
                         sylius: "~2.2.0"
                         symfony: "^8.0"
 
-                    # sylius/test-application v2.3.0-ALPHA.1 sets framework.property_info.with_constructor_extractor,
-                    # which Symfony only knows from 7.1 on, so the test application cannot boot on 6.4.
-                    -
-                        sylius: "~2.3.0@alpha"
-                        symfony: "^6.4"
-
         steps:
             -
                 uses: actions/checkout@v4
@@ -121,12 +115,6 @@ jobs:
                     -
                         sylius: "~2.2.0"
                         symfony: "^8.0"
-
-                    # sylius/test-application v2.3.0-ALPHA.1 sets framework.property_info.with_constructor_extractor,
-                    # which Symfony only knows from 7.1 on, so the test application cannot boot on 6.4.
-                    -
-                        sylius: "~2.3.0@alpha"
-                        symfony: "^6.4"
                 node: ["22.x"]
                 mysql: ["8.0"]
 
