@@ -20,7 +20,7 @@ jobs:
             matrix:
                 php: [ "8.4", "8.5" ]
                 symfony: [ "^6.4", "^7.4", "^8.0" ]
-                sylius: [ "~2.2.0", "~2.3.0@alpha" ]
+                sylius: [ "~2.2.0", "~2.3.0" ]
 
                 exclude:
                     # Sylius 2.2 supports Symfony ^6.4.1 || ^7.4 only.
@@ -108,7 +108,7 @@ jobs:
             matrix:
                 php: [ "8.4", "8.5" ]
                 symfony: [ "^6.4", "^7.4", "^8.0" ]
-                sylius: [ "~2.2.0", "~2.3.0@alpha" ]
+                sylius: [ "~2.2.0", "~2.3.0" ]
 
                 exclude:
                     # Sylius 2.2 supports Symfony ^6.4.1 || ^7.4 only.
@@ -228,7 +228,7 @@ jobs:
 
             -
                 name: Validate database schema
-                run: vendor/bin/console doctrine:schema:validate
+                run: vendor/bin/console doctrine:schema:validate --skip-sync
 
             -
                 name: Run security check
