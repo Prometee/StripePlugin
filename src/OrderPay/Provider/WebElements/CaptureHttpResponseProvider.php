@@ -8,6 +8,7 @@ use FluxSE\SyliusStripePlugin\Appearance\AppearanceBuilder;
 use FluxSE\SyliusStripePlugin\Provider\AfterUrlProviderInterface;
 use Stripe\PaymentIntent;
 use Sylius\Bundle\PaymentBundle\Provider\HttpResponseProviderInterface;
+use Sylius\Bundle\ResourceBundle\Controller\RequestConfiguration;
 use Sylius\Component\Payment\Model\PaymentRequestInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -22,15 +23,16 @@ final readonly class CaptureHttpResponseProvider implements HttpResponseProvider
     ) {
     }
 
+    // Sylius 2.2 passes a RequestConfiguration here, 2.3 a Request; neither is used.
     public function supports(
-        Request $request,
+        Request|RequestConfiguration $request,
         PaymentRequestInterface $paymentRequest,
     ): bool {
         return $paymentRequest->getState() === PaymentRequestInterface::STATE_PROCESSING;
     }
 
     public function getResponse(
-        Request $request,
+        Request|RequestConfiguration $request,
         PaymentRequestInterface $paymentRequest,
     ): Response {
         $data = $paymentRequest->getResponseData();
